@@ -1,0 +1,116 @@
+---
+title: Introduction
+description: Introduction to the entire library.
+date: 2021-04-28
+---
+
+# What is Vapi Blocks?
+Vapi Blocks is a collection of components and styles that can be used to build web applications. It is designed to be simple and easy to integrate into your **ReactJS** and **NextJS** projects.
+
+## Features
+- **Simple**: Vapi Blocks is designed to be simple and easy to use. It is built on top of TailwindCSS, which makes it easy to integrate into your projects.
+
+- **Customizable**: Vapi Blocks is highly customizable. You can easily change the colors, fonts, and other styles to match your brand.
+
+- **Responsive**: Vapi Blocks is designed to be responsive. It works on all devices, from mobile to desktop.
+
+- **Open Source**: Vapi Blocks is open source. You can use it for free in your personal and commercial projects and contribute to its development.
+
+## Installation
+
+You only need to install the dependencies and import the components that you want to use in your project.
+
+### Create the Vapi Hook
+
+Add this to your project, for example @/hooks/**_use-vapi.ts_** file.
+
+<CodeBlockWrapper size="full">
+```ts {5-6} {9-12} {71}
+//hooks/use-vapi.ts
+import { useEffect, useRef, useState, useCallback } from 'react';
+import Vapi from '@vapi-ai/web';
+
+const publicKey = process.env.VAPI_PUBLIC_KEY; // Replace with your actual public key
+const assistantId = process.env.VAPI_ASSISTANT_ID; // Replace with your actual assistant ID
+
+const useVapi = () => {
+  const [volumeLevel, setVolumeLevel] = useState(0);
+  const [isSessionActive, setIsSessionActive] = useState(false);
+  const [conversation, setConversation] = useState<{ role: string, text: string }[]>([]);
+  const vapiRef = useRef<any>(null);
+
+  const initializeVapi = useCallback(() => {
+    if (!vapiRef.current) {
+      const vapiInstance = new Vapi(publicKey);
+      vapiRef.current = vapiInstance;
+
+      vapiInstance.on('call-start', () => {
+        setIsSessionActive(true);
+      });
+
+      vapiInstance.on('call-end', () => {
+        setIsSessionActive(false);
+        setConversation([]); // Reset conversation on call end
+      });
+
+      vapiInstance.on('volume-level', (volume: number) => {
+        setVolumeLevel(volume);
+      });
+
+      vapiInstance.on('message', (message: any) => {
+        if (message.type === 'transcript' && message.transcriptType === 'final') {
+          setConversation((prev) => [
+            ...prev,
+            { role: message.role, text: message.transcript },
+          ]);
+        }
+      });
+
+      vapiInstance.on('error', (e: Error) => {
+        console.error('Vapi error:', e);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    initializeVapi();
+
+    // Cleanup function to end call and dispose Vapi instance
+    return () => {
+      if (vapiRef.current) {
+        vapiRef.current.stop();
+        vapiRef.current = null;
+      }
+    };
+  }, [initializeVapi]);
+
+  const toggleCall = async () => {
+    try {
+      if (isSessionActive) {
+        await vapiRef.current.stop();
+      } else {
+        await vapiRef.current.start(assistantId);
+      }
+    } catch (err) {
+      console.error('Error toggling Vapi session:', err);
+    }
+  };
+
+  return { volumeLevel, isSessionActive, conversation, toggleCall };
+};
+
+export default useVapi;
+
+```
+</CodeBlockWrapper>
+
+**_Note:_** This is just a sample hook, only the relevant parts are shown to get started. Be sure to check Vapi docs to learn more about capabilities.
+
+## Dependencies:
+- **ReactJS**: Vapi Blocks is built on top of ReactJS, so your project needs to have ReactJS installed, for example you can use it with NextJS, Astro or Create React App.
+- **TailwindCSS**: Vapi Blocks uses TailwindCSS for styling, so you need to have TailwindCSS installed in your project.
+
+## Credits
+
+Vapi Blocks is inspired by other libraries like **shadcn ui**, **Aceternity**, and **MagicUI** so I want to give them credit for their work and inspiration. Also want to thank **@gonzalochale/chonza** for their amazing work & providing this component library template to us for customization.
+

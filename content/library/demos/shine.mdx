@@ -1,0 +1,91 @@
+---
+title: Shine
+description: Shine effect component.
+date: 2024-05-12
+published: true
+---
+
+# Shine
+
+This component creates a shine effect, recieves a children prop that will be the element that will have the shine effect.
+
+## Preview
+
+<ComponentPreview name="shine" />{" "}
+
+## Configuration
+
+Add the animation to your **_tailwind.config.ts_** file.
+
+<CodeBlockWrapper size="full">
+```ts {4-15} {18}
+  theme: {
+    extend: {
+      keyframes: {
+        shine: {
+         from: {
+            opacity: "0",
+            transform:
+              "translate(0%,-100%) scale(0.5) skew(-5deg) translate3d(0, 0, 0)",
+          },
+          to: {
+            opacity: "1",
+            transform:
+              "translate(150%,-50%) scale(1) skew(-25deg) translate3d(0, 0, 0)",
+          },
+        },
+      },
+      animation: {
+       shine: "shine 2s ease forwards",
+      },
+    },
+  }
+```
+</CodeBlockWrapper>
+
+**_Note:_** This is not the entire configuration file, only the relevant parts are shown. Make sure to include the new configuration inside the **_theme_** object.
+
+## Code
+
+Copy the following code to your component **_shine.tsx_** file.
+
+<CodeBlockWrapper size="full">
+```tsx
+import React from "react";
+
+export default function Shine({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative w-full h-full flex justify-center items-center overflow-hidden">
+      {children}
+      <div className="z-10 absolute w-5 md:w-8 h-[calc(70%)] md:h-[calc(90%)] top-[calc(-10%)] bg-white/40 blur-2xl animate-shine"></div>
+    </div>
+  );
+}
+```
+</CodeBlockWrapper>
+
+## Usage
+
+Import the component in your file, and wrap the element you want to have the shine effect.
+
+<CodeBlockWrapper size="full">
+```tsx {1} {6-12}
+import Shine from "@/components/shine";
+
+export default function Home() {
+  return (
+    <main>
+        <Shine>
+          <section className="py-24">
+            <span className="text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl lg:text-5xl/none text-transparent bg-clip-text bg-gradient-to-b from-white to-purple-100">
+            This is the shine component
+            </span>
+          </section>
+        </Shine>
+    </main>
+  );
+}
+```
+</CodeBlockWrapper
+
+>

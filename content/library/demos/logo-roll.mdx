@@ -1,0 +1,113 @@
+---
+title: Logo Roll
+description: Logo roll component.
+date: 2024-05-11
+published: true
+---
+
+# Logo Roll
+
+This component creates a logo roll section, crafted with React and Tailwind CSS. The logos are displayed in a loop.
+
+## Preview
+
+<ComponentPreview name="logo-roll" />{" "}
+
+**_Note:_** The logos used in the preview are for demonstration purposes only, they were taken from [svgl.app](https://svgl.app/).
+
+## Configuration
+
+Add the animation to your **_tailwind.config.ts_** file.
+
+<CodeBlockWrapper size="full">
+```ts {4-6} {9}
+  theme: {
+    extend: {
+      keyframes: {
+        "slide-logos": {
+          to: { transform: "translateX(calc(-50% - 2rem))" },
+        },
+      },
+      animation: {
+        "slide-logos": "slide-logos 40s linear infinite",
+      },
+    },
+  }
+```
+</CodeBlockWrapper>
+
+**_Note:_** This is not the entire configuration file, only the relevant parts are shown. Make sure to include the new configuration inside the **_theme_** object.
+
+## Code
+
+Copy the following code to your component **_testimonials.tsx_**.
+
+<CodeBlockWrapper size="wrapper">
+```tsx
+/* eslint-disable @next/next/no-img-element */
+
+export default function LogoRoll() {
+  /*
+  all of the logos were taken from thtps://svgl.app/ 
+  */
+  const logos = [
+    { src: "/logos/aws.svg", alt: "AWS logo" },
+    { src: "/logos/nextjs_logo_dark.svg", alt: "NextJS logo" },
+    { src: "/logos/coursera.svg", alt: "Coursera logo" },
+    { src: "/logos/babel.svg", alt: "Babel logo" },
+    { src: "/logos/sanity.svg", alt: "Sanity logo" },
+    { src: "/logos/webflow.svg", alt: "Webflow logo" },
+    { src: "/logos/stripe.svg", alt: "Stripe logo" },
+    { src: "/logos/prime-video.svg", alt: "Prime video logo" },
+  ];
+
+const dobleLogos = logos.concat(logos);
+
+return (
+
+<section
+  className="w-full max-w-3xl overflow-hidden select-none bg-[#0D0D0C]"
+  style={{
+    WebkitMask:
+      "linear-gradient(90deg, transparent, black 20%, black 80%, transparent)",
+    mask: "linear-gradient(90deg, transparent, black 20%, black 80%, black transparent)",
+  }}
+>
+  <div className="w-full h-fit max-w-3xl flex flex-col justify-center select-none overflow-hidden">
+    <div className="w-max flex flex-nowrap gap-[4rem] animate-slide-logos">
+      {dobleLogos.map((logo, index) => (
+        <img
+          key={index}
+          src={logo.src}
+          alt={logo.alt}
+          loading="eager"
+          className="size-20 object-contain"
+        />
+      ))}
+    </div>
+  </div>
+</section>
+); 
+}
+````
+</CodeBlockWrapper>
+
+## Usage
+
+To use this component, copy the code above and paste it into your component file and then import it into your page.
+
+**_Note:_** This component uses Tailwind CSS, make sure to have it installed in your project.
+
+<CodeBlockWrapper size="full">
+```tsx {1,6}
+import LogoRoll from "@/components/logo-roll";
+
+export default function Home() {
+  return (
+    <main className="flex items-center justify-center h-screen">
+      <LogoRoll />
+    </main>
+  );
+}
+````
+</CodeBlockWrapper>

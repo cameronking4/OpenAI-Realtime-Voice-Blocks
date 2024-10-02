@@ -1,0 +1,57 @@
+---
+title: Shine Card
+description: Shine card component.
+date: 2024-05-25
+published: true
+---
+
+# Shine Card
+
+This component creates a shine card, crafted with React and Tailwind CSS. The card shines when hovered.
+
+## Preview
+
+<ComponentPreview name="shine-card" />
+
+## Code
+
+Copy the following code to your component **_shine-card.tsx_** file.
+
+<CodeBlockWrapper size="full">
+```tsx
+import React from "react";
+
+export function ShineCard({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="group relative size-80 overflow-hidden flex flex-col items-center gap-2 justify-center border bg-[#10100F] border-[#303030] rounded-[1rem] p-2">
+      {children}
+      <div className="absolute inset-0 flex w-full h-full justify-center items-center z-10 [transform:translateX(-130%)_skew(25deg)] duration-1000 group-hover:duration-1000 group-hover:[transform:translateX(130%)_skew(15deg)]">
+        <div className="w-20 h-full bg-white/40 blur-[80px]"></div>
+      </div>
+    </div>
+  );
+}
+```
+</CodeBlockWrapper>
+
+## Usage
+
+To use this component, copy the code above and paste it into your component file and then import it into your page.
+
+**_Note:_** This component uses Tailwind CSS, make sure to have it installed in your project.
+
+<CodeBlockWrapper size="full">
+```tsx {1,6-8}
+import ShineCard from "@/components/shine-card";
+
+export default function Home() {
+  return (
+    <main className="flex items-center justify-center h-screen">
+      <ShineCard>
+        <span className="text-sm font-semibold">Hover me 👀</span>
+      </ShineCard>
+    </main>
+  );
+}
+```
+</CodeBlockWrapper>

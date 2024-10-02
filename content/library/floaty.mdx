@@ -1,0 +1,100 @@
+---
+title: Floaty
+description: Glitch effect component.
+date: 2024-03-04
+published: true
+---
+
+# Floaty
+
+This component adds a floating component to overlay on top of your website. Useful for helpful site assistants, crafted with React and Tailwind CSS. The component is configurable and defaults to bottom right corner.
+
+## Preview
+
+<ComponentPreview name="floaty" />{" "}
+
+## Code
+
+Copy the following code to your component file for example **_floaty.tsx_**.
+
+<CodeBlockWrapper size="wrapper">
+```tsx
+"use client";
+
+import { PhoneCallIcon, MicIcon, AudioLines} from 'lucide-react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import useVapi from '@/hooks/use-vapi'; // Adjust the import path as needed
+
+const FloatingCircle = ({ isActive, volumeLevel, handleClick }: { isActive: boolean, volumeLevel: number, handleClick: () => void }) => {
+  const getIcon = () => {
+    if (!isActive) {
+      return <PhoneCallIcon className="text-secondary" />;
+    } else if (isActive && volumeLevel > 0) {
+      return <AudioLines className="text-secondary" />;
+    } else {
+      return <MicIcon className="text-secondary" />;
+    }
+  };
+
+  return (
+    <div className="fixed bottom-4 right-4 z-50">
+      <div className="relative flex items-center justify-center w-16 h-16">
+        {isActive && volumeLevel > 0 && (
+          <>
+            <motion.div
+              className="absolute w-16 h-16 rounded-full bg-foreground z-0"
+              initial={{ scale: 1, opacity: 0.5 }}
+              animate={{ scale: 2, opacity: 0 }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 0.5 }}
+            />
+            <motion.div
+              className="absolute w-16 h-16 rounded-full bg-foreground z-0"
+              initial={{ scale: 1, opacity: 0.5 }}
+              animate={{ scale: 2, opacity: 0 }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
+            />
+            <motion.div
+              className="absolute w-16 h-16 rounded-full bg-foreground z-0"
+              initial={{ scale: 1, opacity: 0.5 }}
+              animate={{ scale: 2, opacity: 0 }}
+              transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1.5 }}
+            />
+          </>
+        )}
+        <div 
+          className="relative flex items-center justify-center w-16 h-16 rounded-full shadow-xl cursor-pointer z-10 bg-foreground"
+          onClick={handleClick}
+        >
+          {getIcon()}
+        </div>
+      </div>
+    </div>
+  );
+};
+export default FloatingCircle;
+````
+</CodeBlockWrapper>
+
+
+## Usage
+
+Import the component in your file and then use it in your page. Ensure Vapi hook is setup.
+
+**_Note:_** This component uses Tailwind CSS, make sure to have it installed in your project.
+
+<CodeBlockWrapper size="full">
+```tsx {1,6}
+import FloatingCircle from "@/components/vapi/floaty";
+
+export default function Home() {
+  return (
+    <main className="flex items-center justify-center h-screen">
+      <FloatingCircle />
+      // App content here
+    </main>
+  );
+}
+````
+
+</CodeBlockWrapper>

@@ -1,0 +1,153 @@
+---
+title: Quickstart Guide
+description: Quickly test out Vapi Blocks
+date: 2021-05-11
+---
+
+# Quickstart Guide
+
+## Clone the VapiBlocks template
+Clone the [VapiBlocks Next14 TailwindCSS starter kit](https://google.com) for instant setup, pre-configured with Vapi hook & Orb component. Try copying over and swapping out Orb with other components. To get the starter running, run the following commands:
+
+1. Step One: Install starter dependencies and run
+```bash
+npm install
+npm run dev
+```
+2. Step Two: Configure your Vapi assistant using enviornment variables
+
+Edit the `.env` file with Vapi Public Key and Vapi Assistant ID. You can configure your assistant and get these values from the Vapi AI Dashboard.
+```bash
+NEXT_PUBLIC_VAPI_PUBLIC_KEY=""
+NEXT_PUBLIC_VAPI_ASSISTANT_ID=""
+```
+
+You can work directly in web by forking this codesandbox:
+
+[![Edit cameronking4/next-tailwind-vapi-starter/main](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/p/github/cameronking4/next-tailwind-vapi-starter/main?embed=1&file=%2Fhooks%2Fuse-vapi.ts)
+
+<iframe src="https://codesandbox.io/p/github/cameronking4/next-tailwind-vapi-starter/main"
+     width="100%"
+     height="900"
+     title="cameronking4/next-tailwind-vapi-starter/main"
+     allow="accelerometer; ambient-light-sensor; camera; encrypted-media; geolocation; gyroscope; hid; microphone; midi; payment; usb; vr; xr-spatial-tracking"
+     sandbox="allow-forms allow-modals allow-popups allow-presentation allow-same-origin allow-scripts"
+   ></iframe>
+
+### Alternatively, you can fork this Repl:
+
+<iframe src="https://replit.com/@CameronKing5/next-tailwind-vapi-starter?embed=true&theme=dark" width="100%" height="900"></iframe>
+
+### Manual Setup
+
+<CodeBlockWrapper size="full">
+```bash
+npx create-next-app@latest
+```
+</CodeBlockWrapper>
+
+After running the command, you will be prompted with a series of questions, this is where you can configure your project to use Vapi Blocks with NextJS and Tailwind CSS.
+
+<CodeBlockWrapper size="full">
+```bash showLineNumbers /Yes/ /No/ /your-project-name/
+What is your project named? your-project-name
+Would you like to use TypeScript? Yes
+Would you like to use ESLint? Yes
+Would you like to use Tailwind CSS? Yes
+Would you like to use `src/` directory? No
+Would you like to use App Router? Yes
+Would you like to customize the default import alias No
+```
+</CodeBlockWrapper>
+<br/>
+
+<CodeBlockWrapper size="full">
+```bash
+npm install @vapi-ai/react
+```
+</CodeBlockWrapper>
+
+Lastly, copy over the use-vapi hook to your "hooks" folder (if using Next.js). If using Vanilla React, Vue or alternative framework copy over to "lib" or similar folder.
+
+
+<CodeBlockWrapper size="full">
+```ts {5-6} {9-12} {71}
+//hooks/use-vapi.ts
+import { useEffect, useRef, useState, useCallback } from 'react';
+import Vapi from '@vapi-ai/web';
+
+const publicKey = process.env.VAPI_PUBLIC_KEY; // Replace with your actual public key
+const assistantId = process.env.VAPI_ASSISTANT_ID; // Replace with your actual assistant ID
+
+const useVapi = () => {
+  const [volumeLevel, setVolumeLevel] = useState(0);
+  const [isSessionActive, setIsSessionActive] = useState(false);
+  const [conversation, setConversation] = useState<{ role: string, text: string }[]>([]);
+  const vapiRef = useRef<any>(null);
+
+  const initializeVapi = useCallback(() => {
+    if (!vapiRef.current) {
+      const vapiInstance = new Vapi(publicKey);
+      vapiRef.current = vapiInstance;
+
+      vapiInstance.on('call-start', () => {
+        setIsSessionActive(true);
+      });
+
+      vapiInstance.on('call-end', () => {
+        setIsSessionActive(false);
+        setConversation([]); // Reset conversation on call end
+      });
+
+      vapiInstance.on('volume-level', (volume: number) => {
+        setVolumeLevel(volume);
+      });
+
+      vapiInstance.on('message', (message: any) => {
+        if (message.type === 'transcript' && message.transcriptType === 'final') {
+          setConversation((prev) => [
+            ...prev,
+            { role: message.role, text: message.transcript },
+          ]);
+        }
+      });
+
+      vapiInstance.on('error', (e: Error) => {
+        console.error('Vapi error:', e);
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    initializeVapi();
+
+    // Cleanup function to end call and dispose Vapi instance
+    return () => {
+      if (vapiRef.current) {
+        vapiRef.current.stop();
+        vapiRef.current = null;
+      }
+    };
+  }, [initializeVapi]);
+
+  const toggleCall = async () => {
+    try {
+      if (isSessionActive) {
+        await vapiRef.current.stop();
+      } else {
+        await vapiRef.current.start(assistantId);
+      }
+    } catch (err) {
+      console.error('Error toggling Vapi session:', err);
+    }
+  };
+
+  return { volumeLevel, isSessionActive, conversation, toggleCall };
+};
+
+export default useVapi;
+
+```
+</CodeBlockWrapper>
+
+This hook can be extended with advanced function-calling and more.
