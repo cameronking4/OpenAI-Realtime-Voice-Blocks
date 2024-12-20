@@ -90,7 +90,7 @@ export default function PhoneInputForm() {
     <>
       <Toaster position="bottom-right" /> {/* Add the Toaster component */}
       <form onSubmit={handleSubmit} className="mx-auto px-2 items-center">
-        <p className="mb-2">Enter your phone number to get called by Vapi Blocks.</p>
+        <p className="mb-2">Enter your phone number to get called by AI Blocks.</p>
         <div className="flex items-center space-x-2 mb-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

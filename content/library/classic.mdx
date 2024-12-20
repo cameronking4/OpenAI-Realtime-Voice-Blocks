@@ -1,27 +1,54 @@
+---
+title: Classic Visualizer
+description: Classic effect component.
+date: 2024-12-20
+published: true
+---
+
+# Classic Visualizer
+
+Our first VapiBlock! This component recreates the classic audio bars we all know and love. Click the button to start call and the audio bars will animate to your Vapi voice agent. This component is animated purely with React implementation.
+
+## Preview
+
+<ComponentPreview name="classic" />{" "}
+
+## Code
+
+Copy the following code to your component file for example **_classic.tsx_**.
+
+<CodeBlockWrapper size="wrapper">
+```tsx
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import useVapi from '@/hooks/use-vapi';
+import useWebRTCAudioSession from '@/hooks/use-webrtc';
 import { Button } from '@/components/ui/button';
 import { MicIcon, PhoneOff } from 'lucide-react';
 
 const Visualizer: React.FC = () => {
-  const { volumeLevel, isSessionActive, toggleCall } = useVapi();
-  const [bars, setBars] = useState(Array(50).fill(5)); // Initialize with low value for inactivity
+  const { currentVolume, isSessionActive, handleStartStopClick } = useWebRTCAudioSession('alloy');
+  const [bars, setBars] = useState(Array(50).fill(5));
+
+  console.log(currentVolume);
 
   useEffect(() => {
     if (isSessionActive) {
-      updateBars(volumeLevel);
+      updateBars(currentVolume);
     } else {
       resetBars();
     }
-  }, [volumeLevel, isSessionActive]);
+  }, [currentVolume, isSessionActive]);
 
   const updateBars = (volume: number) => {
-    setBars(bars.map(() => Math.random() * volume * 150));
+    if (volume > 0.002) {
+      setBars(bars.map(() => Math.random() * volume * 500));
+    } else {
+      setBars(Array(50).fill(5));
+    }
   };
 
   const resetBars = () => {
-    setBars(Array(50).fill(5)); // Reset to low value for inactivity
+    setBars(Array(50).fill(5));
   };
 
   const micPulseAnimation = {
@@ -66,9 +93,9 @@ const Visualizer: React.FC = () => {
       </AnimatePresence>
       <motion.div
         className="mt-4"
-        animate={isSessionActive && volumeLevel === 0 ? micPulseAnimation : {}}
+        animate={isSessionActive && currentVolume === 0 ? micPulseAnimation : {}}
       >
-        <Button onClick={toggleCall} className="flex items-center justify-center w-12 h-12 rounded-full shadow-lg">
+        <Button onClick={handleStartStopClick} className="flex items-center justify-center w-12 h-12 rounded-full shadow-lg">
           <AnimatePresence>
             {isSessionActive ? (
               <motion.div
@@ -99,3 +126,28 @@ const Visualizer: React.FC = () => {
 };
 
 export default Visualizer;
+```
+</CodeBlockWrapper>
+
+
+
+## Usage
+
+Import the component in your file and then use it in your page. Ensure Vapi hook is setup.
+
+**_Note:_** This component uses Tailwind CSS, make sure to have it installed in your project.
+
+<CodeBlockWrapper size="full">
+```tsx {1,6}
+import Visualizer from "@/components/openai-blocks/classic";
+
+export default function Home() {
+  return (
+    <main className="flex items-center justify-center h-screen">
+      <Visualizer />
+    </main>
+  );
+}
+````
+
+</CodeBlockWrapper>

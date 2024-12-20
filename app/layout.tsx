@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/favicon.ico",
   },
-  keywords: ["Vapi Blocks", "Vapi", "Blocks", "Vapiblocks", "VapiBlocks", "Voice AI", "Voice AI components", "web components", "UI components", "UI Library", "shadcn", "aceternity", "AI", "Next.js", "React", "Tailwind CSS", "Framer Motion", "TypeScript", "Design engineer", "Vapi AI"],
+  keywords: ["AI Blocks", "Vapi", "Blocks", "Vapiblocks", "AI Blocks", "Voice AI", "Voice AI components", "web components", "UI components", "UI Library", "shadcn", "aceternity", "AI", "Next.js", "React", "Tailwind CSS", "Framer Motion", "TypeScript", "Design engineer", "Vapi AI"],
 };
 
 export default function RootLayout({

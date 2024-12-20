@@ -15,70 +15,51 @@ interface AudioParameters {
   noiseLevel: number;
   frequency: number;
   complexity: number;
+  barCount: number;
 }
 
-const AudioVisualizer: React.FC<{ audioData: Uint8Array; isSessionActive: boolean }> = ({ audioData, isSessionActive }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-
-  useEffect(() => {
-    if (isSessionActive) {
-      const canvas = canvasRef.current;
-      const context = canvas?.getContext('2d');
-
-      if (canvas && context) {
-        canvas.width = canvas.offsetWidth;
-        canvas.height = canvas.offsetHeight;
-      }
-
-      draw();
-    }
-  }, [audioData, isSessionActive]);
-
-  const draw = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const context = canvas.getContext('2d');
-    if (!context) return;
-
-    const { width, height } = canvas;
-    context.clearRect(0, 0, width, height);
-
-    const sliceWidth = (width / (audioData.length - 1)) * 2;
-    const centerY = height / 2;
-
-    context.lineWidth = 2;
-    context.strokeStyle = '#9E9E9E';
-    context.beginPath();
-
-    let prevX = 0;
-    let prevY = centerY;
-
-    context.moveTo(prevX, prevY);
-
-    for (let i = 0; i < audioData.length; i++) {
-      const avgValue = (audioData[i] + audioData[Math.max(0, i - 1)]) / 2; // Averaging current and previous data points
-      const v = avgValue / 255.0;
-      const y = centerY + (v - 0.5) * height;
-      const x = i * sliceWidth;
-
-      context.bezierCurveTo((prevX + x) / 2, prevY, (prevX + x) / 2, y, x, y);
-
-      prevX = x;
-      prevY = y;
-    }
-
-    context.stroke();
-  };
-
+const AudioVisualizer: React.FC<{ 
+  audioData: Uint8Array; 
+  isSessionActive: boolean;
+  barCount: number;
+}> = ({ audioData, isSessionActive, barCount }) => {
   return (
-    <motion.canvas
-      ref={canvasRef}
-      className="w-full h-full"
+    <motion.svg 
+      width="100%" 
+      height="100%" 
+      viewBox="0 0 1000 200" 
+      preserveAspectRatio="xMidYMid meet"
       initial={{ opacity: 0 }}
       animate={{ opacity: isSessionActive ? 1 : 0 }}
       transition={{ duration: 0.5 }}
-    />
+      className="w-full h-full"
+    >
+      {Array.from({ length: barCount }).map((_, index) => {
+        const height = audioData[Math.floor(index * (audioData.length / barCount))] || 0;
+        const normalizedHeight = (height / 255) * 100;
+        const spacing = Math.min(1000 / (barCount * 2), 100);
+        const barWidth = Math.min(spacing * 0.5, 50);
+        
+        return (
+          <React.Fragment key={index}>
+            <rect
+              x={500 + index * spacing - (spacing * barCount / 2)}
+              y={100 - normalizedHeight / 2}
+              width={barWidth}
+              height={normalizedHeight}
+              className={`fill-current ${isSessionActive ? 'text-black dark:text-white opacity-70' : 'text-gray-400 opacity-30'}`}
+            />
+            <rect
+              x={500 - index * spacing - barWidth - (spacing * barCount / 2)}
+              y={100 - normalizedHeight / 2}
+              width={barWidth}
+              height={normalizedHeight}
+              className={`fill-current ${isSessionActive ? 'text-black dark:text-white opacity-70' : 'text-gray-400 opacity-30'}`}
+            />
+          </React.Fragment>
+        );
+      })}
+    </motion.svg>
   );
 };
 
@@ -129,7 +110,11 @@ const AudioAnalyzer: React.FC<{
     };
   }, [volumeLevel, isSessionActive, audioParams]);
 
-  return <AudioVisualizer audioData={audioData} isSessionActive={isSessionActive} />;
+  return <AudioVisualizer 
+    audioData={audioData} 
+    isSessionActive={isSessionActive} 
+    barCount={audioParams.barCount}
+  />;
 };
 
 const MinimalComponent: React.FC<{
@@ -143,9 +128,15 @@ const MinimalComponent: React.FC<{
     setShowVisualizer(!isSessionActive);
   };
 
+  const micPulseAnimation = {
+    scale: [1, 1.2, 1],
+    opacity: [1, 0.8, 1],
+    transition: { duration: 0.8, repeat: Infinity }
+  };
+
   return (
     <div className="flex flex-col items-center justify-center min-h-full">
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center w-full">
         <motion.button
           key="callButton"
           onClick={handleToggleCall}
@@ -153,7 +144,10 @@ const MinimalComponent: React.FC<{
           whileTap={{ scale: 0.9 }}
           whileHover={{ scale: 1.1 }}
           initial={{ x: 0 }}
-          animate={{ x: showVisualizer ? -10 : 0 }}
+          animate={{ 
+            x: showVisualizer ? -10 : 0,
+            ...((isSessionActive && volumeLevel === 0) ? micPulseAnimation : {})
+          }}
           transition={{ duration: 0.3 }}
           style={{ zIndex: 10, position: 'relative' }}
         >
@@ -183,7 +177,8 @@ const MinimalShowcase = () => {
     waveIntensity: 0.1,
     noiseLevel: 9,
     frequency: 5,
-    complexity: 5
+    complexity: 5,
+    barCount: 5
   });
 
   return (
@@ -244,6 +239,18 @@ const MinimalShowcase = () => {
                     value={audioParams.complexity}
                     className="col-span-2"
                     onChange={(e) => setAudioParams({...audioParams, complexity: parseInt(e.target.value)})}
+                  />
+                </div>
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="barCount">Bar Count</Label>
+                  <Input
+                    id="barCount"
+                    type="number"
+                    min={1}
+                    max={50}
+                    value={audioParams.barCount}
+                    className="col-span-2"
+                    onChange={(e) => setAudioParams({...audioParams, barCount: parseInt(e.target.value)})}
                   />
                 </div>
               </div>

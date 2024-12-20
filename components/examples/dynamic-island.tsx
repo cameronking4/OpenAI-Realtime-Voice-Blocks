@@ -10,24 +10,25 @@ import {
   useDynamicIslandSize,
   SIZE_PRESETS
 } from "@/components/ui/dynamic-island"; // Adjust import paths as needed
-import useVapi from "@/hooks/use-vapi"; // Adjust import path as needed
+import useWebRTCAudioSession from '@/hooks/use-webrtc'; // Replace useVapi import
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react"; // Assuming you have these icons available
 
-const VapiDynamicIsland = () => {
-  const { toggleCall, isSessionActive, volumeLevel, conversation } = useVapi();
+const DynamicIslandExample = () => {
+  const { handleStartStopClick: toggleCall, isSessionActive, currentVolume: volumeLevel, conversation } = useWebRTCAudioSession('alloy');
   const { setSize } = useDynamicIslandSize();
   const [isStartingCall, setIsStartingCall] = useState(false);
   const [isEndingCall, setIsEndingCall] = useState(false);
   const [timer, setTimer] = useState<NodeJS.Timeout | null>(null);
   const [isListening, setIsListening] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [messages, setMessages] = useState<{role: string, text: string}[]>([]);
 
   useEffect(() => {
     if (isSessionActive) {
       setIsStartingCall(false);
 
-      if (volumeLevel > 0) {
+      if (volumeLevel > 0.002) {
         setIsListening(false);
         if (timer) {
           clearTimeout(timer);
@@ -54,31 +55,31 @@ const VapiDynamicIsland = () => {
         clearTimeout(timer);
         setTimer(null);
       }
-      setSize(SIZE_PRESETS.DEFAULT); // Reset size when session is inactive
+      setSize(SIZE_PRESETS.DEFAULT);
     }
     if(!isSessionActive || isListening){
       setSize(SIZE_PRESETS.DEFAULT);
     }
-  }, [isSessionActive, setSize, volumeLevel, timer, conversation]);
+  }, [isSessionActive, setSize, volumeLevel, timer]);
+
+  useEffect(() => {
+    if (conversation) {
+      setMessages(conversation);
+    }
+  }, [conversation]);
 
   const handleDynamicIslandClick = async () => {
     if (isSessionActive) {
       setIsEndingCall(true);
       await toggleCall();
-      setSize(SIZE_PRESETS.DEFAULT); // Reset to default size after ending call
+      setIsEndingCall(false);
+      setSize(SIZE_PRESETS.DEFAULT);
     } else {
       setIsStartingCall(true);
       await toggleCall();
       setIsStartingCall(false);
       setSize(SIZE_PRESETS.DEFAULT);
     }
-  };
-
-  const handleEndCall = async () => {
-    setIsEndingCall(true);
-    await toggleCall();
-    setIsEndingCall(false);
-    setSize(SIZE_PRESETS.DEFAULT);
   };
 
   const renderState = () => {
@@ -109,17 +110,21 @@ const VapiDynamicIsland = () => {
       );
     }
 
-    const assistantMessages = conversation.filter(msg => msg.role === 'assistant').slice(-2);
-
     return (
-      <DynamicContainer className="flex flex-col h-full w-full px-4 py-2 space-y-2">
-        {assistantMessages.map((message, index) => (
-          <DynamicDiv key={index} className="flex justify-start">
-            <div className="bg-cyan-300 rounded-2xl tracking-tight leading-5 my-1">
-              <DynamicDescription className="bg-cyan-300 rounded-2xl tracking-tight leading-5 text-white text-left px-1">{message.text}</DynamicDescription>
+      <DynamicContainer className="flex flex-col h-full w-full px-4 py-2">
+        <div ref={scrollRef} className="h-full overflow-hidden">
+          <DynamicDiv className="flex justify-center w-full h-full">
+            <div className="size-full bg-cyan-300 rounded-2xl">
+              <DynamicDescription className="w-full h-full px-3 py-2 items-center justify-center text-center text-white text-sm leading-snug tracking-tight overflow-y-auto">
+                {conversation?.length > 0 && 
+                  conversation
+                    .filter(m => m.role === 'assistant')
+                    .slice(-1)[0]?.text
+                }
+              </DynamicDescription>
             </div>
           </DynamicDiv>
-        ))}
+        </div>
       </DynamicContainer>
     );
   };
@@ -133,14 +138,14 @@ const VapiDynamicIsland = () => {
   );
 };
 
-const VapiDynamicIslandWrapper = () => {
+const DynamicIslandExampleWrapper = () => {
   return (
     <DynamicIslandProvider initialSize={SIZE_PRESETS.DEFAULT}>
       <div className="h-full">
-        <VapiDynamicIsland />
+        <DynamicIslandExample />
       </div>
     </DynamicIslandProvider>
   );
 };
 
-export default VapiDynamicIslandWrapper;
+export default DynamicIslandExampleWrapper;

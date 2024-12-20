@@ -3,19 +3,19 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { MicIcon, PhoneOff, Podcast } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import useVapi from '@/hooks/use-vapi';
+import useWebRTCAudioSession from '@/hooks/use-webrtc';
 
 const Waveform: React.FC = () => {
-  const { volumeLevel, isSessionActive, toggleCall } = useVapi();
+  const { currentVolume, isSessionActive, handleStartStopClick } = useWebRTCAudioSession('alloy');
   const [bars, setBars] = useState(Array(50).fill(0));
 
   useEffect(() => {
     if (isSessionActive) {
-      updateBars(volumeLevel);
+      updateBars(currentVolume * 1000);
     } else {
       resetBars();
     }
-  }, [volumeLevel, isSessionActive]);
+  }, [currentVolume, isSessionActive]);
 
   const updateBars = (volume: number) => {
     setBars(bars.map(() => Math.random() * volume * 50));
@@ -37,7 +37,7 @@ const Waveform: React.FC = () => {
           <Podcast
             size={28}
             className="text-black dark:text-white cursor-pointer"
-            onClick={toggleCall}
+            onClick={handleStartStopClick}
           />
         </motion.div>
         {isSessionActive && (
@@ -73,7 +73,7 @@ const Waveform: React.FC = () => {
           </motion.div>
         )}
       </div>
-      <Button onClick={toggleCall} className='m-2'>
+      <Button onClick={handleStartStopClick} className='m-2'>
         {isSessionActive ? <PhoneOff size={18} /> : <MicIcon size={18} />}
       </Button>
     </div>

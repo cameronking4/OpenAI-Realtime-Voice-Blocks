@@ -28,8 +28,7 @@ export function Header() {
               Beta
             </Badge>
           </Link>
-          <div className="flex gap-10 items-center">
-            {/* <Link href={newComponent.path}> */}
+          {/* <div className="flex gap-10 items-center">
             <Link href="/components/outbound-phone-dial" >
               <Button
                 variant="link"
@@ -66,7 +65,7 @@ export function Header() {
                 Templates
               </Button>
             </Link>
-          </div>
+          </div> */}
         </nav>
         <div className="flex gap-3 items-center justify-end">
           {/* <Link

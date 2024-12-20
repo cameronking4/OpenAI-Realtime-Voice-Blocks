@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { Mic, PhoneCall } from 'lucide-react';
+import { Mic, MicOff } from 'lucide-react';
 import ReactSiriwave, { IReactSiriwaveProps } from 'react-siriwave';
 import { motion, AnimatePresence } from 'framer-motion';
-import useVapi from '@/hooks/use-vapi'; // Adjust the import path as needed
+import useWebRTCAudioSession from '@/hooks/use-webrtc'; // Replace useVapi import
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,13 +18,13 @@ interface SiriProps {
 }
 
 const Siri: React.FC<SiriProps> = ({ theme }) => {
-  const { volumeLevel, isSessionActive, toggleCall } = useVapi();
+  const { currentVolume, isSessionActive, handleStartStopClick } = useWebRTCAudioSession('alloy'); // Replace useVapi hook
   const [siriWaveConfig, setSiriWaveConfig] = useState<IReactSiriwaveProps>({
     theme: theme || "ios9",
     ratio: 1,
-    speed: 0.2,
-    amplitude: 1,
-    frequency: 6,
+    speed: 5,
+    amplitude: 25,
+    frequency: 15,
     color: '#9E9E9E',
     cover: true,
     width: 300,
@@ -37,14 +37,14 @@ const Siri: React.FC<SiriProps> = ({ theme }) => {
   useEffect(() => {
     setSiriWaveConfig(prevConfig => ({
       ...prevConfig,
-      amplitude: isSessionActive ? (volumeLevel > 0.01 ? volumeLevel * 7.5 : 0) : 0,
-      speed: isSessionActive ? (volumeLevel > 0.5 ? volumeLevel * 10 : 0) : 0,
-      frequency: isSessionActive ? (volumeLevel > 0.01 ? volumeLevel * 5 : 0) : (volumeLevel > 0.5 ? volumeLevel * 10 : 0),
+      amplitude: isSessionActive ? (currentVolume > 0.02 ? currentVolume * 50 : 0) : 0,
+      speed: isSessionActive ? (currentVolume > 0.1 ? currentVolume * 50 : 0) : 0,
+      frequency: isSessionActive ? (currentVolume > 0.01 ? currentVolume * 50 : 0) : (currentVolume > 0.5 ? currentVolume * 100 : 0),
     }));
-  }, [volumeLevel, isSessionActive]);
+  }, [currentVolume, isSessionActive]);
 
   const handleToggleCall = () => {
-    toggleCall();
+    handleStartStopClick();
   };
 
   const handleConfigChange = (key: keyof IReactSiriwaveProps, value: any) => {
@@ -55,7 +55,7 @@ const Siri: React.FC<SiriProps> = ({ theme }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-full">
+    <div className="flex flex-col items-center justify-center min-h-full p-6">
       <div className="flex items-center justify-center">
         <motion.button
           key="callButton"
@@ -80,7 +80,7 @@ const Siri: React.FC<SiriProps> = ({ theme }) => {
                 <Mic size={20} />
               </motion.div>
             ) : (
-              <PhoneCall size={20} />
+              <MicOff size={20} />
             )}
           </AnimatePresence>
         </motion.button>

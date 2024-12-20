@@ -1,49 +1,54 @@
 export const siteConfig = {
-  name: "Vapi Blocks",
+  name: "OpenAI Realtime Blocks",
   url: "https://vapiblocks.com",
-  description: "Vapi Blocks is a UI Library built with React and TailwindCSS to drop-in Voice AI components into your application with ease.",
+  description: "OpenAI Realtime Blocks is a UI Library built with React and TailwindCSS to drop-in Voice AI components into your application with ease.",
   author: "cameronking4",
   links: {
     twitter: "https://x.com/cameronyking4",
-    github: "https://github.com/cameronking4/VapiBlocks/tree/master",
+    github: "https://github.com/cameronking4/openai-realtime-blocks",
     portfolio: "https://www.linkedin.com/in/cameronyking",
   },
   docs: [
     {
-      title: "Intro",
+      title: "Getting Started",
       path: "/docs",
       new: false,
     },
     {
-      title: "Quickstart",
-      path: "/docs/quickstart",
-      new: false,
-    },
-    {
-      title: "Templates",
-      path: "/docs/templates",
-      new: false,
-    },
-  ],
-  components: [
-    {
-      title: "Minimal",
-      path: "/components/minimal-component",
-      new: false,
-    },
-    {
-      title: "Classic",
-      path: "/components/visualizer",
+      title: "Changelog",
+      path: "/docs/changelog",
       new: false,
     },
     // {
-    //   title: "Pulser",
-    //   path: "/components/waveform",
+    //   title: "Quickstart",
+    //   path: "/docs/quickstart",
     //   new: false,
     // },
+    // {
+    //   title: "Templates",
+    //   path: "/docs/templates",
+    //   new: false,
+    // },
+  ],
+  components: [
     {
-      title: "Orb",
-      path: "/components/3d-orb",
+      title: "Classic",
+      path: "/components/classic",
+      new: false,
+    },
+    {
+      title: "Dock",
+      path: "/components/dock", 
+      new: true,
+    },
+    {
+      title: "Dynamic Island",
+      path: "/components/dynamic-island",
+      new: true,
+    },
+    {
+      title: "Floaty",
+      path: "/components/floaty",
       new: false,
     },
     {
@@ -52,9 +57,14 @@ export const siteConfig = {
       new: true,
     },
     {
-      title: "Dynamic Island",
-      path: "/components/dynamic-island",
-      new: true,
+      title: "Minimal",
+      path: "/components/minimal-component",
+      new: false,
+    },
+    {
+      title: "Orb",
+      path: "/components/3d-orb",
+      new: false,
     },
     {
       title: "Radial",
@@ -67,35 +77,30 @@ export const siteConfig = {
       new: true,
     },
     {
-      title: "Floaty",
-      path: "/components/floaty",
-      new: false,
-    },
-    {
       title: "Transcriber",
-      path: "/components/transcribe",
+      path: "/components/transcribe", 
       new: true,
     },
   ],
-  sections: [
-    {
-      title: "Outbound Call",
-      path: "/components/outbound-phone-dial",
-      new: false,
-    }
-  ],
-  demos: [
-    {
-      title: "Meeting Scheduler",
-      path: "/components/demos/meeting",
-      new: true,
-    },
-    {
-      title: "Coding Assistant",
-      path: "/components/demos/coder",
-      new: true,
-    }
-  ],
+  // sections: [
+  //   {
+  //     title: "Outbound Call",
+  //     path: "/components/outbound-phone-dial",
+  //     new: false,
+  //   }
+  // ],
+  // demos: [
+  //   {
+  //     title: "Meeting Scheduler",
+  //     path: "/components/demos/meeting",
+  //     new: true,
+  //   },
+  //   {
+  //     title: "Coding Assistant",
+  //     path: "/components/demos/coder",
+  //     new: true,
+  //   }
+  // ],
 };
 
 export type SiteConfig = typeof siteConfig;

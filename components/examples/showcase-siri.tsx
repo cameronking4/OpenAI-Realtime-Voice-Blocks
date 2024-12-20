@@ -1,6 +1,4 @@
 import React from "react";
-import useVapi from "@/hooks/use-vapi"; // Adjust the import path as needed
-import Transcriber from "@/components/examples/transcriber"; // Adjust the import path as needed
 import Siri from "./siri";
 
 function Hero() {

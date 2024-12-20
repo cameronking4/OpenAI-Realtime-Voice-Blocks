@@ -5,7 +5,7 @@ const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || ""; // Replace with
 const assistantId = process.env.NEXT_PUBLIC_VAPI_CODER || ""; // Replace with your actual assistant ID
 
 const routes: { [key: string]: string } = {
-  "visualizer": "/components/visualizer",
+  "visualizer": "/components/classic",
   "orb": "/components/orb",
   "radial": "/components/radial",
   "siri": "/components/siri"

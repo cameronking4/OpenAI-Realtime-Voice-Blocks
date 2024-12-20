@@ -2,10 +2,12 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { createNoise3D } from "simplex-noise";
-import useVapi from "@/hooks/use-vapi";
+import useWebRTCAudioSession from "@/hooks/use-webrtc";
+import { Label } from "../ui/label";
+import { Slider } from "../ui/slider";
 
-const Orb: React.FC = () => {
-  const { volumeLevel, isSessionActive, toggleCall } = useVapi();
+const Orb: React.FC<{ intensity?: number }> = ({ intensity = 3 }) => {
+  const { currentVolume, isSessionActive, handleStartStopClick } = useWebRTCAudioSession('alloy');
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const groupRef = useRef<THREE.Group | null>(null);
@@ -15,7 +17,6 @@ const Orb: React.FC = () => {
   const noise = createNoise3D();
 
   useEffect(() => {
-    console.log("Initializing visualization...");
     initViz();
     window.addEventListener("resize", onWindowResize);
     return () => {
@@ -25,26 +26,23 @@ const Orb: React.FC = () => {
 
   useEffect(() => {
     if (isSessionActive && ballRef.current) {
-      console.log("Session is active, morphing the ball");
-      updateBallMorph(ballRef.current, volumeLevel);
+      updateBallMorph(ballRef.current, currentVolume);
     } else if (
       !isSessionActive &&
       ballRef.current &&
       originalPositionsRef.current
     ) {
-      console.log("Session ended, resetting the ball");
       resetBallMorph(ballRef.current, originalPositionsRef.current);
     }
-  }, [volumeLevel, isSessionActive]);
+  }, [currentVolume, isSessionActive]);
 
   const initViz = () => {
-    console.log("Initializing Three.js visualization...");
     const scene = new THREE.Scene();
     const group = new THREE.Group();
     const camera = new THREE.PerspectiveCamera(
       20,
-      window.innerWidth / window.innerHeight,
-      0.5,
+      1,
+      1,
       100,
     );
     camera.position.set(0, 0, 100);
@@ -56,7 +54,21 @@ const Orb: React.FC = () => {
     cameraRef.current = camera;
 
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
-    renderer.setSize(window.innerWidth / 3, window.innerHeight / 3);
+    const outElement = document.getElementById("out");
+    if (outElement) {
+      outElement.innerHTML = ""; // Clear any existing renderer
+      outElement.appendChild(renderer.domElement);
+      
+      // Set renderer size to match container width
+      const width = outElement.clientWidth;
+      renderer.setSize(width, width);
+      
+      // Style the canvas element to maintain aspect ratio
+      renderer.domElement.style.width = '100%';
+      renderer.domElement.style.height = '100%';
+      renderer.domElement.style.objectFit = 'contain';
+    }
+
     rendererRef.current = renderer;
 
     const icosahedronGeometry = new THREE.IcosahedronGeometry(10, 8);
@@ -87,13 +99,6 @@ const Orb: React.FC = () => {
 
     scene.add(group);
 
-    const outElement = document.getElementById("out");
-    if (outElement) {
-      outElement.innerHTML = ""; // Clear any existing renderer
-      outElement.appendChild(renderer.domElement);
-      renderer.setSize(outElement.clientWidth, outElement.clientHeight);
-    }
-
     render();
   };
 
@@ -118,18 +123,15 @@ const Orb: React.FC = () => {
 
     const outElement = document.getElementById("out");
     if (outElement) {
-      cameraRef.current.aspect =
-        outElement.clientWidth / outElement.clientHeight;
+      const width = outElement.clientWidth;
+      rendererRef.current.setSize(width, width);
+      
+      cameraRef.current.aspect = 1;
       cameraRef.current.updateProjectionMatrix();
-      rendererRef.current.setSize(
-        outElement.clientWidth,
-        outElement.clientHeight,
-      );
     }
   };
 
   const updateBallMorph = (mesh: THREE.Mesh, volume: number) => {
-    console.log("Morphing the ball with volume:", volume);
     const geometry = mesh.geometry as THREE.BufferGeometry;
     const positionAttribute = geometry.getAttribute("position");
 
@@ -147,14 +149,14 @@ const Orb: React.FC = () => {
       const rf = 0.00001;
       const distance =
         offset +
-        volume * 4 + // Amplify volume effect
+        volume * 4 * intensity + // Apply intensity to volume effect
         noise(
           vertex.x + time * rf * 7,
           vertex.y + time * rf * 8,
           vertex.z + time * rf * 9,
         ) *
           amp *
-          volume;
+          volume * intensity; // Apply intensity to noise effect
       vertex.multiplyScalar(distance);
 
       positionAttribute.setXYZ(i, vertex.x, vertex.y, vertex.z);
@@ -168,7 +170,6 @@ const Orb: React.FC = () => {
     mesh: THREE.Mesh,
     originalPositions: Float32Array,
   ) => {
-    console.log("Resetting the ball to its original shape");
     const geometry = mesh.geometry as THREE.BufferGeometry;
     const positionAttribute = geometry.getAttribute("position");
 
@@ -186,15 +187,41 @@ const Orb: React.FC = () => {
   };
 
   return (
-    <div style={{ height: "100%" }}>
+    <div style={{ height: "100%", width: "100%" }}>
       <div
         id="out"
-        className="hover:cursor-pointer"
-        onClick={toggleCall}
-        style={{ height: "100%", width: "100%" }}
+        className="hover:cursor-pointer aspect-square w-full"
+        onClick={handleStartStopClick}
       ></div>
     </div>
   );
 };
 
-export default Orb;
+const OrbShowcase = () => {
+  const [intensity, setIntensity] = React.useState(3);
+
+  return (
+    <div className="p-6 space-y-4 w-full justify-center items-center flex flex-col">
+      <div className="aspect-square max-h-96">
+        <Orb intensity={intensity} />
+      </div>
+      <p className="text-sm text-center">Click to toggle conversation</p>
+      <div className="w-full max-w-md mx-auto py-6">
+        <Label htmlFor="intensity" className="block text-sm font-medium mb-2">
+          Animation Intensity: {intensity.toFixed(1)}
+        </Label>
+        <Slider
+          defaultValue={[3]}
+          min={0.5}
+          max={12}
+          step={0.5}
+          value={[intensity]}
+          onValueChange={([value]) => setIntensity(value)}
+          className="w-full"
+        />
+      </div>
+    </div>
+  );
+};
+
+export default OrbShowcase;

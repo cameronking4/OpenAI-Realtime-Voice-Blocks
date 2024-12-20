@@ -98,7 +98,7 @@ export function MobileNav() {
                     </Link>
                   ))}
                 </div>
-                <div className="flex flex-col gap-6 items-start">
+                {/* <div className="flex flex-col gap-6 items-start">
                   <span className="scroll-m-20 text-xl font-medium tracking-tight">
                     Non-Voice Animated Components
                   </span>
@@ -127,7 +127,7 @@ export function MobileNav() {
                   <span className="scroll-m-20 text-xl font-medium tracking-tight">
                     Demos & Examples
                   </span>
-                  {siteConfig.demos.map((component) => (
+                  {siteConfig.demos && siteConfig.demos.map((component) => (
                     <Link
                       key={component.path}
                       href={component.path}
@@ -147,7 +147,7 @@ export function MobileNav() {
                       {component.new && <Badge variant="outline">New</Badge>}
                     </Link>
                   ))}
-                </div>
+                </div> */}
               </div>
             </ScrollArea>
           </SheetHeader>

@@ -39,15 +39,6 @@ function useIsMobile() {
 	return isMobile;
 }
 
-// Pass array of assistantIds to dock
-const assistantIds = [
-	"f311b326-bf6f-49c7-b2ca-0d76382bf2fc",
-	"1fc9fcc6-55e1-4168-8c38-e351dd434939",
-	"8d676299-6ff4-4f87-8dcc-0056a4b1eb9a",
-	"41e193b8-920e-4259-b0b6-39b7229d940f",
-	null,
-	"f13d4b25-aafe-40af-b4be-0d4e2e4258e6",
-];
 const gradients = [
 	"https://products.ls.graphics/mesh-gradients/images/03.-Snowy-Mint_1-p-130x130q80.jpeg",
 	"https://products.ls.graphics/mesh-gradients/images/04.-Hopbush_1-p-130x130q80.jpeg",
@@ -102,7 +93,6 @@ export default function DockAnimation() {
 						<DockCard
 							key={src}
 							id={`${index}`}
-							assistantId={assistantIds[index] || "default-id"}
 						>
 							<DockCardInner src={src} id={`${index}`}>
 								{responsiveOpenIcons[index]}

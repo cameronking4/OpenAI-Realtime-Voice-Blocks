@@ -16,7 +16,7 @@ export default function Hero() {
         </div>
         <div className="flex gap-2 justify-center">
           <a
-            href="https://github.com/cameronking4/VapiBlocks"
+            href="https://github.com/cameronking4/AI Blocks"
             className="no-underline"
             target="_blank"
             rel="noopener noreferrer"

@@ -9,7 +9,7 @@ function Appointment() {
     <section className="relative w-full mx-auto flex flex-col justify-center items-center gap-8">
       <div className="flex flex-col gap-5 text-center animate-hero-in">
         <span className="text-4xl mt-8 max-w-3xl font-medium tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl/none bg-clip-text">
-          Book an appointment with Cam @ Vapi Blocks!
+          Book an appointment with Cam @ AI Blocks!
         </span>
         <br/>
         <a

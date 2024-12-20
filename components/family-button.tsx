@@ -4,9 +4,6 @@ import React, { FC, ReactNode, useState } from "react";
 import { motion } from "framer-motion";
 import { PlusIcon, XIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import Orb from "./3d-orb2";
-import { Button } from "../ui/button";
-import AbstractBall from "./abstract-ball";
 
 const CONTAINER_SIZE = 200;
 

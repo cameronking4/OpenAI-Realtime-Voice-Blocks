@@ -1,7 +1,7 @@
 import { PhoneCallIcon, MicIcon, AudioLines} from 'lucide-react';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import useVapi from '@/hooks/use-vapi'; // Adjust the import path as needed
+import useWebRTCAudioSession from '@/hooks/use-webrtc'; // Replace useVapi import
 
 const FloatingCircle = ({ isActive, volumeLevel, handleClick }: { isActive: boolean, volumeLevel: number, handleClick: () => void }) => {
   const getIcon = () => {
@@ -52,21 +52,28 @@ const FloatingCircle = ({ isActive, volumeLevel, handleClick }: { isActive: bool
 
 const FloatyExample = () => {
   const [showCircle, setShowCircle] = useState(false);
-  const { volumeLevel, isSessionActive, toggleCall } = useVapi();
+  const { currentVolume, isSessionActive, handleStartStopClick } = useWebRTCAudioSession('alloy'); // Replace useVapi hook
 
   const handleButtonClick = () => {
     setShowCircle(!showCircle);
   };
 
   return (
-    <div className="App">
+    <div className="flex flex-col items-center justify-center min-h-full gap-4">
       <button
         onClick={handleButtonClick}
         className="px-4 py-2 rounded-lg text-sm shadow-md focus:outline-none border hover:bg-primary-dark transition-colors duration-200 ease-in-out"
       >
         Toggle Floaty
       </button>
-      {showCircle && <FloatingCircle isActive={isSessionActive} volumeLevel={volumeLevel} handleClick={toggleCall} />}
+      <p className="text-sm text-muted-foreground">Click to toggle floaty in bottom right corner of the screen.</p>
+      {showCircle && (
+        <FloatingCircle 
+          isActive={isSessionActive} 
+          volumeLevel={currentVolume} 
+          handleClick={handleStartStopClick} 
+        />
+      )}
     </div>
   );
 }

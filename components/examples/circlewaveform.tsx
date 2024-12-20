@@ -2,19 +2,19 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Mic, MicOff } from 'lucide-react';
-import useVapi from '@/hooks/use-vapi';
+import useWebRTCAudioSession from '@/hooks/use-webrtc';
 
 const CircleWaveform: React.FC = () => {
-  const { volumeLevel, isSessionActive, toggleCall } = useVapi();
+  const { currentVolume, isSessionActive, handleStartStopClick } = useWebRTCAudioSession('alloy');
   const [bars, setBars] = useState(Array(50).fill(0));
 
   useEffect(() => {
     if (isSessionActive) {
-      updateBars(volumeLevel);
+      updateBars(currentVolume);
     } else {
       resetBars();
     }
-  }, [volumeLevel, isSessionActive]);
+  }, [currentVolume, isSessionActive]);
 
   const updateBars = (volume: number) => {
     setBars(bars.map(() => Math.random() * volume * 50));
@@ -32,15 +32,15 @@ const CircleWaveform: React.FC = () => {
           <MicOff
             size={24}
             className="text-black dark:text-white"
-            onClick={toggleCall}
+            onClick={handleStartStopClick}
             style={{ cursor: 'pointer', zIndex: 10 }}
           />
           :
           <Mic
-          size={28}
-          className="text-black dark:text-white"
-          onClick={toggleCall}
-          style={{ cursor: 'pointer', zIndex: 10 }}
+            size={28}
+            className="text-black dark:text-white"
+            onClick={handleStartStopClick}
+            style={{ cursor: 'pointer', zIndex: 10 }}
           />
           }
           <svg width="100%" height="100%" viewBox="0 0 300 300" style={{ position: 'absolute', top: 0, left: 0 }}>

@@ -8,7 +8,7 @@ export default function Testimonials() {
       title: "CEO",
       image: "https://ui-avatars.com/api/?name=&background=FFB3C0&color=fff",
       testimonial:
-        "Vapi Blocks revolutionized our software development, streamlining workflow and enhancing product quality.",
+        "AI Blocks revolutionized our software development, streamlining workflow and enhancing product quality.",
     },
     {
       id: 2,
@@ -16,7 +16,7 @@ export default function Testimonials() {
       title: "CTO",
       image: "https://ui-avatars.com/api/?name=&background=0D8ABC&color=fff",
       testimonial:
-        "Vapi Blocks is a game-changer, boosting productivity and delivering top-notch solutions.",
+        "AI Blocks is a game-changer, boosting productivity and delivering top-notch solutions.",
     },
     {
       id: 3,
@@ -24,7 +24,7 @@ export default function Testimonials() {
       title: "COO",
       image: "https://ui-avatars.com/api/?name=&background=FFA36F&color=fff",
       testimonial:
-        "Vapi Blocks empowered us to build stunning interfaces with ease, gaining a competitive edge.",
+        "AI Blocks empowered us to build stunning interfaces with ease, gaining a competitive edge.",
     },
     {
       id: 4,
@@ -32,7 +32,7 @@ export default function Testimonials() {
       title: "CFO",
       image: "https://ui-avatars.com/api/?name=&background=FDE047&color=fff",
       testimonial:
-        "Vapi Blocks exceeded expectations, saving countless development hours and focusing on what matters.",
+        "AI Blocks exceeded expectations, saving countless development hours and focusing on what matters.",
     },
     {
       id: 5,
@@ -40,7 +40,7 @@ export default function Testimonials() {
       title: "CEO",
       image: "https://ui-avatars.com/api/?name=&background=8FC0F7&color=fff",
       testimonial:
-        "Vapi Blocks is a game-changer, providing tools for remarkable user experiences.",
+        "AI Blocks is a game-changer, providing tools for remarkable user experiences.",
     },
     {
       id: 6,
@@ -48,7 +48,7 @@ export default function Testimonials() {
       title: "CTO",
       image: "https://ui-avatars.com/api/?name=&background=C7A4FF&color=fff",
       testimonial:
-        "Vapi Blocks is indispensable, simplifying projects and elevating results.",
+        "AI Blocks is indispensable, simplifying projects and elevating results.",
     },
     {
       id: 7,
@@ -56,7 +56,7 @@ export default function Testimonials() {
       title: "COO",
       image: "https://ui-avatars.com/api/?name=&background=0D8ABC&color=fff",
       testimonial:
-        "Vapi Blocks stands out as the best, offering flexibility and reliability.",
+        "AI Blocks stands out as the best, offering flexibility and reliability.",
     },
     {
       id: 8,
@@ -64,7 +64,7 @@ export default function Testimonials() {
       title: "CFO",
       image: "https://ui-avatars.com/api/?name=&background=FFB3C0&color=fff",
       testimonial:
-        "Vapi Blocks accelerated our development process with robust features and seamless integration.",
+        "AI Blocks accelerated our development process with robust features and seamless integration.",
     },
     {
       id: 9,
@@ -72,7 +72,7 @@ export default function Testimonials() {
       title: "CEO",
       image: "https://ui-avatars.com/api/?name=&background=FFA36F&color=fff",
       testimonial:
-        "Vapi Blocks is amazing, helping deliver exceptional products consistently.",
+        "AI Blocks is amazing, helping deliver exceptional products consistently.",
     },
     {
       id: 10,
@@ -80,7 +80,7 @@ export default function Testimonials() {
       title: "CTO",
       image: "https://ui-avatars.com/api/?name=&background=FDE047&color=fff",
       testimonial:
-        "Vapi Blocks transformed how we approach development with intuitive design and powerful features.",
+        "AI Blocks transformed how we approach development with intuitive design and powerful features.",
     },
   ];
   const dobleTestimonials = testimonials.concat(testimonials);

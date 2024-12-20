@@ -1,7 +1,6 @@
-import useVapiFactory from './use-vapi-factory';
+import useWebRTCAudioSession from "@/hooks/use-webrtc";
 
-const publicKey = process.env.NEXT_PUBLIC_VAPI_PUBLIC_KEY || "";
-const assistantId = process.env.NEXT_PUBLIC_VAPI_SCHEDULER || "";
+const { handleStartStopClick } = useWebRTCAudioSession('alloy');
 
-const useBookAppointment = useVapiFactory(publicKey, assistantId);
+const useBookAppointment = handleStartStopClick;
 export default useBookAppointment;

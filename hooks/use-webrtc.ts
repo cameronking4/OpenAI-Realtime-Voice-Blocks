@@ -1,34 +1,8 @@
----
-title: Introduction
-description: Introduction to the entire library.
-date: 2021-04-28
----
-
-# About OpenAI Realtime Blocks
-AI Blocks is a collection of components and styles that can be used to build web applications. It is designed to be simple and easy to integrate into your **ReactJS** and **NextJS** projects.
-
-## Features
-- **Simple**: AI Blocks is designed to be simple and easy to use. It is built on top of TailwindCSS, which makes it easy to integrate into your projects.
-- **Customizable**: AI Blocks is highly customizable. You can easily change the colors, fonts, and other styles to match your brand.
-- **Responsive**: AI Blocks is designed to be responsive. It works on all devices, from mobile to desktop.
-- **Open Source**: AI Blocks is open source. You can use it for free in your personal and commercial projects and contribute to its development.
-
-## Installation
-
-You only need to install the dependencies and import the components that you want to use in your project.
-
-### Create the WebRTC Hook
-
-Add this to your project, for example @/hooks/**_use-webrtc.ts_** file.
-
-<CodeBlockWrapper size="full">
-```ts {5-6} {9-12} {71}
-//hooks/use-webrtc.ts
 "use client";
 
 import { useState, useRef, useEffect } from "react";
 import { Tool } from "@/lib/tools";
-
+import { Message } from "@/lib/conversations";
 const useWebRTCAudioSession = (voice: string, tools?: Tool[]) => {
   const [status, setStatus] = useState("");
   const [isSessionActive, setIsSessionActive] = useState(false);
@@ -38,6 +12,8 @@ const useWebRTCAudioSession = (voice: string, tools?: Tool[]) => {
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const dataChannelRef = useRef<RTCDataChannel | null>(null);
   const [msgs, setMsgs] = useState<any[]>([]);
+  const [conversation, setConversation] = useState<any[]>([]);
+
   // Add function registry
   const functionRegistry = useRef<Record<string, Function>>({});
   const [currentVolume, setCurrentVolume] = useState(0);
@@ -66,24 +42,55 @@ const useWebRTCAudioSession = (voice: string, tools?: Tool[]) => {
   const handleDataChannelMessage = async (event: MessageEvent) => {
     try {
       const msg = JSON.parse(event.data);
-      if (msg.type === 'response.function_call_arguments.done') {
-        const fn = functionRegistry.current[msg.name];
-        if (fn) {
-          const args = JSON.parse(msg.arguments);
-          const result = await fn(args);
-
-          const response = {
-            type: 'conversation.item.create',
-            item: {
-              type: 'function_call_output',
-              call_id: msg.call_id,
-              output: JSON.stringify(result)
-            }
-          };
-
-          dataChannelRef.current?.send(JSON.stringify(response));
-        }
+      
+      if (msg.type === 'response.audio_transcript.delta') {
+        // Add new message or update existing one
+        const newMessage: Message = {
+          role: 'assistant',
+          text: msg.delta,
+          timestamp: new Date().toISOString(),
+          isFinal: false
+        };
+        
+        setConversation(prev => {
+          const lastMsg = prev[prev.length - 1];
+          if (lastMsg && !lastMsg.isFinal && lastMsg.role === 'assistant') {
+            // Update existing message
+            const updatedMessages = [...prev];
+            updatedMessages[prev.length - 1] = {
+              ...lastMsg,
+              text: lastMsg.text + msg.delta
+            };
+            return updatedMessages;
+          } else {
+            // Add new message
+            return [...prev, newMessage];
+          }
+        });
       }
+
+      if (msg.type === 'response.audio_transcript.done') {
+        // Mark last message as final
+        setConversation(prev => {
+          const updatedMessages = [...prev];
+          if (updatedMessages.length > 0) {
+            updatedMessages[updatedMessages.length - 1].isFinal = true;
+          }
+          return updatedMessages;
+        });
+      }
+
+      if (msg.type === 'input_audio_buffer.committed') {
+        // Add user message
+        const userMessage: Message = {
+          role: 'user',
+          text: msg.transcript || '',
+          timestamp: new Date().toISOString(),
+          isFinal: true
+        };
+        setConversation(prev => [...prev, userMessage]);
+      }
+
       setMsgs(prevMsgs => [...prevMsgs, msg]);
       return msg;
     } catch (error) {
@@ -185,9 +192,9 @@ const useWebRTCAudioSession = (voice: string, tools?: Tool[]) => {
           setCurrentVolume(volume);
           
           // Optional: Log when speech is detected
-          if (volume > 0.1) {
-            console.log('Speech detected with volume:', volume);
-          }
+        //   if (volume > 0.1) {
+        //     console.log('Speech detected with volume:', volume);
+        //   }
         }, 100);
       };
 
@@ -270,6 +277,7 @@ const useWebRTCAudioSession = (voice: string, tools?: Tool[]) => {
     setIsSessionActive(false);
     setStatus("");
     setMsgs([]);
+    setConversation([]);
   };
 
   const handleStartStopClick = () => {
@@ -289,25 +297,9 @@ const useWebRTCAudioSession = (voice: string, tools?: Tool[]) => {
     handleStartStopClick,
     registerFunction,
     msgs,
-    currentVolume
+    currentVolume,
+    conversation
   };
 };
 
 export default useWebRTCAudioSession;
-
-```
-</CodeBlockWrapper>
-
-**_Note:_** This is just a sample hook, only the relevant parts are shown to get started. Be sure to checkout the OpenAI Realtime Beta [docs](https://platform.openai.com/docs/guides/realtime) to learn more about capabilities.
-
-## Dependencies:
-- **ReactJS**: AI Blocks is built on top of ReactJS, so your project needs to have ReactJS installed, for example you can use it with NextJS, Astro or Create React App.
-- **TailwindCSS**: AI Blocks uses TailwindCSS for styling, so you need to have TailwindCSS installed in your project.
-- **WebRTC**: AI Blocks uses WebRTC for real-time audio communication, so you need to have WebRTC installed in your project.
-- **Framer Motion**: AI Blocks uses Framer Motion for animations, so you need to have Framer Motion installed in your project.
-- Additional dependencies may be required depending on the components you use.
-
-## Credits
-
-AI Blocks is inspired by other libraries like **shadcn ui**, **Aceternity**, and **MagicUI** so I want to give them credit for their work and inspiration. Also want to thank **@gonzalochale/chonza** for their amazing work & providing this component library template to us for customization.
-

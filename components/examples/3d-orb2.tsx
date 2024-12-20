@@ -2,10 +2,10 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { createNoise3D } from 'simplex-noise';
-import useVapi from '@/hooks/use-vapi';
+import useWebRTCAudioSession from "@/hooks/use-webrtc";
 
 const Orb: React.FC = () => {
-  const { volumeLevel, isSessionActive, toggleCall } = useVapi();
+  const { currentVolume, isSessionActive, handleStartStopClick } = useWebRTCAudioSession('alloy');
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const groupRef = useRef<THREE.Group | null>(null);
@@ -24,11 +24,11 @@ const Orb: React.FC = () => {
 
   useEffect(() => {
     if (isSessionActive && ballRef.current) {
-      updateBallMorph(ballRef.current, volumeLevel);
+      updateBallMorph(ballRef.current, currentVolume);
     } else if (!isSessionActive && ballRef.current && originalPositionsRef.current) {
       resetBallMorph(ballRef.current, originalPositionsRef.current);
     }
-  }, [volumeLevel, isSessionActive]);
+  }, [currentVolume, isSessionActive]);
 
   const initViz = () => {
     const scene = new THREE.Scene();
@@ -158,7 +158,7 @@ const Orb: React.FC = () => {
 
   return (
     <div className='h-fit'>
-      <div id="out" className="hover:cursor-pointer" onClick={toggleCall} style={{ height: '100%', width: '100%' }}></div>
+      <div id="out" className="hover:cursor-pointer" onClick={handleStartStopClick} style={{ height: '100%', width: '100%' }}></div>
     </div>
   );
 };

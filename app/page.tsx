@@ -10,10 +10,9 @@ import { cn } from "@/lib/utils";
 import SparklesText from "@/components/ui/sparkle-text";
 import Siri from "@/components/examples/siri";
 import React, { useEffect, useState } from "react";
-import useVapi from "@/hooks/use-vapi"; // Adjust the import path as needed
 import Transcriber from "@/components/examples/transcriber"; // Adjust the import path as needed
-
-
+import useWebRTCAudioSession from "@/hooks/use-webrtc";
+import { siteConfig } from "@/config/site";
 export default async function Home() {
   return (
     
@@ -34,7 +33,7 @@ function HeroLanding() {
   useEffect(() => {
     const getRepoStars = async () => {
       try {
-        const res = await fetch("https://api.github.com/repos/cameronking4/VapiBlocks", {
+        const res = await fetch(siteConfig.links.github, {
           cache: "no-store",
         });
         const data = await res.json();
@@ -68,8 +67,11 @@ function HeroLanding() {
           <span className="text-gradient_indigo-purple font-extrabold">
             Web Apps{" "}
           </span>with{" "} */}
-          <SparklesText text={"pre-built UI Components"}/>
+          <SparklesText text={"OpenAI Realtime Blocks"}/>
         </h1>
+        <p className="text-muted-foreground">
+          OpenAI Realtime Blocks is a library of pre-built UI components for Next.js to copy and paste.
+        </p>
         <div
           className="flex justify-center space-x-2 md:space-x-4 mt-2"
           style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}
@@ -83,7 +85,7 @@ function HeroLanding() {
             <ArrowRight className="size-4" />
           </Link>
           <Link
-            href="https://github.com/cameronking4/VapiBlocks"
+            href={siteConfig.links.github}
             target="_blank"
             rel="noreferrer"
             className={cn(buttonVariants({ variant: "outline", size: "lg" }), "px-5 space-x-2")}
@@ -102,7 +104,8 @@ function HeroLanding() {
 }
 
 function Hero() {
-  const { toggleCall, isSessionActive, volumeLevel, conversation } = useVapi();
+  const { handleStartStopClick, isSessionActive, conversation } = useWebRTCAudioSession('alloy');
+
   return (
     <section className="relative w-full mx-auto flex flex-col justify-center items-center gap-8">
       <div className="flex flex-col gap-5 text-center animate-hero-in">
@@ -110,18 +113,18 @@ function Hero() {
           rel="noopener noreferrer"
         >
           <button
-            onClick={toggleCall}
+            onClick={handleStartStopClick}
             className="inline-flex items-center space-x-2 p-4 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary shadow hover:bg-indigo/30 hover:text-indigo"
           >
            {isSessionActive ? <PhoneOff/> : <MicIcon/>}
           </button>
-          <p className="text-sm mt-4 animate" style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}>Talk to Vapi Blocks</p>
+          <p className="text-sm mt-4 animate" style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}>Toggle Voice Chat</p>
         </a>
       </div>
       <div className="relative flex justify-center items-center aspect-video w-full p-2">
         <span className="absolute top-75 w-[calc(100%-70%)] h-[calc(100%-70%)] bg-purple-700 blur-[120px]"></span>
         <div className="size-full mx-auto">
-          <Transcriber conversation={conversation} />
+            <Transcriber conversation={conversation} />
         </div>
       </div>
     </section>

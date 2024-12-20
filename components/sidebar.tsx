@@ -6,6 +6,8 @@ import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "./ui/badge";
+import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, AwaitedReactNode } from "react";
+import { UrlObject } from "url";
 
 export const Sidebar = () => {
   const pathname = usePathname();
@@ -39,15 +41,15 @@ export const Sidebar = () => {
               </Link>
             ))}
           </div>
-          <div className="flex flex-col gap-1 items-start">
+          <div className="mt-8 flex flex-col gap-4 items-start">
             <span className="scroll-m-20 text-sm font-medium tracking-tight">
-              Animated Components
+              Voice Components
             </span>
-            {siteConfig.components.map((component) => (
+            {siteConfig.components.map((component: { path: string; title: string; new?: boolean }) => (
               <Link
                 key={component.path}
                 href={component.path}
-                className="flex items-center gap-1"
+                className="flex items-center gap-2"
               >
                 <Button
                   variant="link"
@@ -63,7 +65,7 @@ export const Sidebar = () => {
               </Link>
             ))}
           </div>
-          <div className="flex flex-col gap-1 items-start">
+          {/* <div className="flex flex-col gap-1 items-start">
             <span className="scroll-m-20 text-sm font-medium tracking-tight">
               Standard Components
             </span>
@@ -109,8 +111,8 @@ export const Sidebar = () => {
                 </Button>
                 {component.new && <Badge variant="outline">New</Badge>}
               </Link>
-            ))}
-          </div>
+            ))} 
+          </div>*/}
         </div>
       </ScrollArea>
     </aside>

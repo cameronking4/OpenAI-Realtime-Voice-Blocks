@@ -3,6 +3,11 @@
 import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
+import { Message } from "@/lib/conversations";
+
+interface TranscriberProps {
+  conversation: Message[];
+}
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -46,7 +51,7 @@ const AvatarFallback = React.forwardRef<
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-function Transcriber({ conversation }: { conversation: Array<{ role: string; text: string; timestamp: string; isFinal: boolean }> }) {
+function Transcriber({ conversation }: TranscriberProps) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -70,8 +75,8 @@ function Transcriber({ conversation }: { conversation: Array<{ role: string; tex
               </Avatar>
             )}
             <div className={`bg-${message.role === 'user' ? 'primary' : 'secondary'} px-4 py-1 rounded-lg max-w-[70%] ${message.role === 'user' ? 'text-background' : 'dark:text-foreground'}`}>
-              <p>{message.text}</p>
-              <div className="text-xs text-secondary">{message.timestamp}</div>
+              <p>{message.text? message.text : 'User is speaking...'}</p>
+              <div className="text-xs text-muted-foreground">{new Date(message.timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}</div>
             </div>
             {message.role === 'user' && (
               <Avatar className="w-8 h-8 shrink-0">
