@@ -1,6 +1,6 @@
 export const siteConfig = {
   name: "OpenAI Realtime Blocks",
-  url: "https://vapiblocks.com",
+  url: "https://openai-realtime-blocks.vercel.app",
   description: "OpenAI Realtime Blocks is a UI Library built with React and TailwindCSS to drop-in Voice AI components into your application with ease.",
   author: "cameronking4",
   links: {
