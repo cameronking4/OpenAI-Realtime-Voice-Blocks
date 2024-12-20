@@ -21,7 +21,7 @@ export default function Logos() {
 
   return (
     <section
-      className="w-full max-w-3xl overflow-hidden select-none flex flex-col justify-center text-center font-medium text-muted-foreground animate-hero-in mb-2"
+      className="mt-4 w-full max-w-3xl overflow-hidden select-none flex flex-col justify-center text-center font-medium text-muted-foreground animate-hero-in mb-2"
       style={{
         WebkitMask:
           "linear-gradient(90deg, transparent, black 20%, black 80%, transparent)",

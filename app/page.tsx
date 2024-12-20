@@ -55,22 +55,18 @@ function HeroLanding() {
           style={{ animationDelay: "0.15s", animationFillMode: "forwards" }}
           target="_blank"
         >
-          <span className="mr-3">🎉</span> Welcome to the Future of DriveThru!{" "}
+          <span className="mr-3">🎉</span> Welcome to the AI Component Library!{" "}
         </Link>
         <h1 className="text-balance font-urban text-4xl font-extrabold tracking-tight sm:text-5xl md:text-6xl lg:text-[66px]">
-          Effortlessly add {" "}
+          Add{"  "}
           <span className="text-gradient_indigo-purple font-extrabold">
-            Voice AI {""}
+            Voice AI
           </span> 
-          into your Web Apps with
-          {/* {" "}
-          <span className="text-gradient_indigo-purple font-extrabold">
-            Web Apps{" "}
-          </span>with{" "} */}
+          {" "}into your Next Apps with
           <SparklesText text={"OpenAI Realtime Blocks"}/>
         </h1>
         <p className="text-muted-foreground">
-          OpenAI Realtime Blocks is a library of pre-built UI components for Next.js to copy and paste.
+          A library of pre-built UI components for AI to copy and paste in your Next.js apps.
         </p>
         <div
           className="flex justify-center space-x-2 md:space-x-4 mt-2"
@@ -121,8 +117,7 @@ function Hero() {
           <p className="text-sm mt-4 animate" style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}>Toggle Voice Chat</p>
         </a>
       </div>
-      <div className="relative flex justify-center items-center aspect-video w-full p-2">
-        <span className="absolute top-75 w-[calc(100%-70%)] h-[calc(100%-70%)] bg-purple-700 blur-[120px]"></span>
+      <div className="relative flex justify-center items-center h-[500px] w-full p-2">
         <div className="size-full mx-auto">
             <Transcriber conversation={conversation} />
         </div>
