@@ -14,7 +14,7 @@ OpenAI Realtime Blocks is a collection of components and styles that can be used
 - **Responsive**: OpenAI Realtime Blocks is designed to be responsive. It works on all devices, from mobile to desktop.
 - **Open Source**: OpenAI Realtime Blocks is open source. You can use it for free in your personal and commercial projects and contribute to its development.
 
-## Voice & Mic Reactive Components [view here](/app/components/examples)
+## Voice & Mic Reactive Components [view here](/components/examples)
 
 - **Siri**
 - **Classic**
