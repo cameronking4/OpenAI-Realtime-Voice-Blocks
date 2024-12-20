@@ -1,6 +1,6 @@
 import useWebRTCAudioSession from "@/hooks/use-webrtc";
 
-const { handleStartStopClick } = useWebRTCAudioSession('alloy');
+const { handleStartStopClick, isSessionActive, conversation } = useWebRTCAudioSession('alloy');
 
-const useBookAppointment = handleStartStopClick;
+const useBookAppointment = { handleStartStopClick, isSessionActive, conversation };
 export default useBookAppointment;
