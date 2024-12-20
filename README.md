@@ -1,4 +1,4 @@
-# OpenAI Realtime Blocks - animated components for OpenAI Realtime API
+# OpenAI Realtime Blocks - animated Voice AI components
 <img width="1637" alt="Screenshot 2024-12-20 at 4 16 58 AM" src="https://github.com/user-attachments/assets/103ebc3e-ccb5-44a3-ad26-ae4e7b929dcf" />
 
 ## Intro
