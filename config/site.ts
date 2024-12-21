@@ -37,6 +37,11 @@ export const siteConfig = {
       new: false,
     },
     {
+      title: "ChatGPT",
+      path: "/components/chatgpt", 
+      new: true,
+    },
+    {
       title: "Dock",
       path: "/components/dock", 
       new: true,
@@ -69,6 +74,11 @@ export const siteConfig = {
     {
       title: "Radial",
       path: "/components/circlewaveform",
+      new: false,
+    },
+    {
+      title: "Ring",
+      path: "/components/ring",
       new: false,
     },
     {

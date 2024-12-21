@@ -6,8 +6,7 @@ import { siteConfig } from "@/config/site";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Badge } from "./ui/badge";
-import { ReactElement, JSXElementConstructor, ReactNode, ReactPortal, AwaitedReactNode } from "react";
-import { UrlObject } from "url";
+
 
 export const Sidebar = () => {
   const pathname = usePathname();
