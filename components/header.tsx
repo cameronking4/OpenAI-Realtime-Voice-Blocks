@@ -28,6 +28,18 @@ export function Header() {
               Beta
             </Badge>
           </Link>
+          <Link href="https://openai-rt-shadcn.vercel.app" >
+              <Button
+                variant="outline"
+                size="sm"
+                className={cn(
+                  "hover:no-underline hover:text-foreground",
+                  pathname.includes("components") && !pathname.includes("demos") && "text-foreground"
+                )}
+              >
+                Demo Starter Template
+              </Button>
+            </Link>
           {/* <div className="flex gap-10 items-center">
             <Link href="/components/outbound-phone-dial" >
               <Button

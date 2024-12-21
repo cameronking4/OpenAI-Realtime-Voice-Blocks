@@ -1,6 +1,6 @@
 ---
 title: Floaty
-description: Glitch effect component.
+description: Floating Voice Assistant in bottom right corner.
 date: 2024-03-04
 published: true
 ---
@@ -19,12 +19,10 @@ Copy the following code to your component file for example **_floaty.tsx_**.
 
 <CodeBlockWrapper size="wrapper">
 ```tsx
-"use client";
-
 import { PhoneCallIcon, MicIcon, AudioLines} from 'lucide-react';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import useVapi from '@/hooks/use-vapi'; // Adjust the import path as needed
+import useWebRTCAudioSession from '@/hooks/use-webrtc';
 
 const FloatingCircle = ({ isActive, volumeLevel, handleClick }: { isActive: boolean, volumeLevel: number, handleClick: () => void }) => {
   const getIcon = () => {
@@ -38,7 +36,7 @@ const FloatingCircle = ({ isActive, volumeLevel, handleClick }: { isActive: bool
   };
 
   return (
-    <div className="fixed bottom-4 right-4 z-50">
+    <div className="fixed bottom-5 right-5 z-50">
       <div className="relative flex items-center justify-center w-16 h-16">
         {isActive && volumeLevel > 0 && (
           <>
@@ -72,7 +70,36 @@ const FloatingCircle = ({ isActive, volumeLevel, handleClick }: { isActive: bool
     </div>
   );
 };
-export default FloatingCircle;
+
+const FloatyExample = () => {
+  const [showCircle, setShowCircle] = useState(false);
+  const { currentVolume, isSessionActive, handleStartStopClick } = useWebRTCAudioSession('alloy');
+
+  const handleButtonClick = () => {
+    setShowCircle(!showCircle);
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-full gap-4">
+      <button
+        onClick={handleButtonClick}
+        className="px-4 py-2 rounded-lg text-sm shadow-md focus:outline-none border hover:bg-primary-dark transition-colors duration-200 ease-in-out"
+      >
+        Toggle Floaty
+      </button>
+      <p className="text-sm text-muted-foreground">Click to toggle floaty in bottom right corner of the screen.</p>
+      {showCircle && (
+        <FloatingCircle 
+          isActive={isSessionActive} 
+          volumeLevel={currentVolume} 
+          handleClick={handleStartStopClick} 
+        />
+      )}
+    </div>
+  );
+}
+
+export default FloatyExample;
 ````
 </CodeBlockWrapper>
 
@@ -83,9 +110,9 @@ Import the component in your file and then use it in your page. Ensure the use-w
 
 **_Note:_** This component uses Tailwind CSS, make sure to have it installed in your project.
 
-<CodeBlockWrapper size="full">
+<CodeBlockWrapper size="wrapper">
 ```tsx {1,6}
-import FloatingCircle from "@/components/vapi/floaty";
+import FloatingCircle from "@/components/openai-blocks/floaty";
 
 export default function Home() {
   return (

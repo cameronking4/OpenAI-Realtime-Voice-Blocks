@@ -7,7 +7,7 @@ published: true
 
 # Multi-Agent Dock
 
-This component is a multi-agent dock that allows you to switch between different voice agents. Click the button to start call and the audio bars will animate to your Vapi voice agent. This component is animated purely with React implementation.
+This component is a multi-agent dock that allows you to switch between different voice agents. Only one agent can be active at a time.
 
 ## Preview
 
@@ -17,7 +17,7 @@ This component is a multi-agent dock that allows you to switch between different
 
 Copy the following code to your component file for example **_dock-example.tsx_**.
 
-<CodeBlockWrapper size="full">
+<CodeBlockWrapper size="wrapper">
 ```tsx
 "use client";
 
@@ -563,7 +563,7 @@ Import the component in your file and then use it in your page. Ensure the use-w
 
 **_Note:_** This component uses Tailwind CSS, make sure to have it installed in your project.
 
-<CodeBlockWrapper size="full">
+<CodeBlockWrapper size="wrapper">
 ```tsx {1,6}
 import DockExample from "@/components/openai-blocks/dock_example";
 

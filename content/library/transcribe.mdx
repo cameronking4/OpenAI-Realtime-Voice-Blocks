@@ -1,6 +1,6 @@
 ---
-title: Transcribe Vapi component
-description: Hero component.
+title: Transcriber component
+description: Live transcription from OpenAI RealTime API Beta WebRTC.
 date: 2024-05-18
 published: true
 ---
@@ -15,22 +15,42 @@ A beautiful live transcription component for your calls, crafted with React and 
 
 ## Configuration
 
-Using hook such as, **_use-vapi.ts_**, is required. Notice how the transcription component accesses the live transcript as it streams.
+Using hook such as, **_use-webrtc.ts_**, is required. Notice how the transcription component accesses the live transcript as it streams.
 
-<CodeBlockWrapper size="full">
+<CodeBlockWrapper size="wrapper">
 ```ts {4-9}
-  const initializeVapi = useCallback(() => {
-    if (!vapiRef.current) {
-      vapiInstance.on('message', (message: any) => {
-        if (message.type === 'transcript' && message.transcriptType === 'final') {
-          setConversation((prev) => [
-            ...prev,
-            { role: message.role, text: message.transcript },
-          ]);
-        }
-      });
-    }
-  }, []);
+import React from "react";
+import Transcriber from "@/components/examples/transcriber"; // Adjust the import path as needed
+import useWebRTCAudioSession from "@/hooks/use-webrtc";
+
+
+function TranscriberExample() {
+  const { handleStartStopClick, isSessionActive, conversation, msgs } = useWebRTCAudioSession('alloy');
+  console.log(JSON.stringify(msgs));
+
+  return (
+    <section className="p-6 relative w-full mx-auto flex flex-col justify-center items-center gap-8">
+      <div className="flex flex-col gap-5 text-center animate-hero-in">
+          <button
+            onClick={handleStartStopClick}
+            className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary shadow hover:bg-indigo/30 hover:text-indigo h-9 px-4 py-2"
+          >
+            {isSessionActive ? "Stop Call" : "Start Call"}
+          </button>
+      </div>
+      {isSessionActive && (
+        <div className="relative flex justify-center items-center aspect-video w-full">
+          <span className="absolute top-48 w-[calc(100%-70%)] h-[calc(100%-70%)] bg-purple-700 blur-[120px]"></span>
+          <div className="size-full mx-auto">
+          <Transcriber conversation={conversation} />
+          </div>
+        </div>
+      )}
+    </section>
+  );
+}
+
+export default TranscriberExample;
 ```
 </CodeBlockWrapper>
 
@@ -47,6 +67,11 @@ Copy and paste the following code into your component, example **_transcriber.ts
 import * as React from "react";
 import * as AvatarPrimitive from "@radix-ui/react-avatar";
 import { cn } from "@/lib/utils";
+import { Message } from "@/lib/conversations";
+
+interface TranscriberProps {
+  conversation: Message[];
+}
 
 const Avatar = React.forwardRef<
   React.ElementRef<typeof AvatarPrimitive.Root>,
@@ -90,7 +115,7 @@ const AvatarFallback = React.forwardRef<
 ));
 AvatarFallback.displayName = AvatarPrimitive.Fallback.displayName;
 
-function Transcriber({ conversation }: { conversation: Array<{ role: string; text: string; timestamp: string; isFinal: boolean }> }) {
+function Transcriber({ conversation }: TranscriberProps) {
   const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
@@ -104,7 +129,7 @@ function Transcriber({ conversation }: { conversation: Array<{ role: string; tex
       <div className="bg-secondary px-4 py-3 flex items-center justify-between dark:bg-secondary">
         <div className="font-medium text-foreground dark:text-foreground">Live Transcript</div>
       </div>
-      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4 z-50">
         {conversation.map((message, index) => (
           <div key={index} className={`flex items-start gap-3 ${message.role === 'user' ? 'justify-end' : ''}`}>
             {message.role === 'assistant' && (
@@ -114,8 +139,8 @@ function Transcriber({ conversation }: { conversation: Array<{ role: string; tex
               </Avatar>
             )}
             <div className={`bg-${message.role === 'user' ? 'primary' : 'secondary'} px-4 py-1 rounded-lg max-w-[70%] ${message.role === 'user' ? 'text-background' : 'dark:text-foreground'}`}>
-              <p>{message.text}</p>
-              <div className="text-xs text-secondary">{message.timestamp}</div>
+              <p>{message.text? message.text : 'User is speaking...'}</p>
+              <div className="text-xs text-muted-foreground">{new Date(message.timestamp).toLocaleTimeString('en-US', { hour: 'numeric', minute: 'numeric' })}</div>
             </div>
             {message.role === 'user' && (
               <Avatar className="w-8 h-8 shrink-0">
@@ -140,9 +165,9 @@ export { Avatar, AvatarImage, AvatarFallback };
 
 Import the component in your file.
 
-<CodeBlockWrapper size="full">
+<CodeBlockWrapper size="wrapper">
 ```tsx {1,6}
-import Transcriber from "@/components/vapi/transcriber";
+import Transcriber from "@/components/openai-blocks/transcriber";
 
 export default function Home() {
   return (

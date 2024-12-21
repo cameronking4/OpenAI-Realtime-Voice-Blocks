@@ -7,7 +7,7 @@ published: true
 
 # Minimal
 
-This component offers an inline Vapi experience, crafted with React and Tailwind CSS. This component animates a line to the Vapi agent's volume level using canvas implementation.
+This component offers an inline experience, crafted with React and Tailwind CSS. This component animates a line to the Realtime agent's volume level using canvas implementation.
 
 ## Preview
 
@@ -24,7 +24,19 @@ Copy the following code to your component file for example **_minimal-component.
 import React, { useState, useEffect, useRef } from 'react';
 import { MicOff, Mic } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import useVapi from '@/hooks/use-vapi'; // Adjust the import path as needed
+import useWebRTCAudioSession from '@/hooks/use-webrtc';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
+import { Button } from '@/components/ui/button';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+
+// Add interface for audio parameters
+interface AudioParameters {
+  waveIntensity: number;
+  noiseLevel: number;
+  frequency: number;
+  complexity: number;
+}
 
 const AudioVisualizer: React.FC<{ audioData: Uint8Array; isSessionActive: boolean }> = ({ audioData, isSessionActive }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -91,7 +103,11 @@ const AudioVisualizer: React.FC<{ audioData: Uint8Array; isSessionActive: boolea
   );
 };
 
-const AudioAnalyzer: React.FC<{ volumeLevel: number; isSessionActive: boolean }> = ({ volumeLevel, isSessionActive }) => {
+const AudioAnalyzer: React.FC<{ 
+  volumeLevel: number; 
+  isSessionActive: boolean;
+  audioParams: AudioParameters;
+}> = ({ volumeLevel, isSessionActive, audioParams }) => {
   const [audioData, setAudioData] = useState<Uint8Array>(new Uint8Array(128));
 
   useEffect(() => {
@@ -102,10 +118,22 @@ const AudioAnalyzer: React.FC<{ volumeLevel: number; isSessionActive: boolean }>
 
     const updateAudioData = () => {
       const dataArray = new Uint8Array(128);
-
+      const time = Date.now() / 1000;
+      
       for (let i = 0; i < dataArray.length; i++) {
-        const variability = (Math.random() - 0.5) * 0.5; // Reduced variability for less noise
-        dataArray[i] = Math.min(Math.max(128 + volumeLevel * variability * 128, 0), 255);
+        // Adjust wave parameters based on complexity
+        const waves = [];
+        for (let j = 1; j <= audioParams.complexity; j++) {
+          waves.push(
+            Math.sin(time * j * audioParams.frequency + i * 0.1) * 
+            (audioParams.waveIntensity / j)
+          );
+        }
+        
+        const combinedWave = waves.reduce((a, b) => a + b, 0) * volumeLevel;
+        const noise = (Math.random() - 0.5) * audioParams.noiseLevel * volumeLevel;
+        
+        dataArray[i] = Math.min(Math.max(128 + (combinedWave + noise) * 128, 0), 255);
       }
       setAudioData(dataArray);
     };
@@ -120,13 +148,15 @@ const AudioAnalyzer: React.FC<{ volumeLevel: number; isSessionActive: boolean }>
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [volumeLevel, isSessionActive]);
+  }, [volumeLevel, isSessionActive, audioParams]);
 
   return <AudioVisualizer audioData={audioData} isSessionActive={isSessionActive} />;
 };
 
-const MinimalComponent: React.FC = () => {
-  const { volumeLevel, isSessionActive, toggleCall } = useVapi();
+const MinimalComponent: React.FC<{
+  audioParams: AudioParameters;
+}> = ({ audioParams }) => {
+  const { currentVolume: volumeLevel, isSessionActive, handleStartStopClick: toggleCall } = useWebRTCAudioSession('alloy');
   const [showVisualizer, setShowVisualizer] = useState(false);
 
   const handleToggleCall = () => {
@@ -160,7 +190,7 @@ const MinimalComponent: React.FC = () => {
               transition={{ duration: 0.3 }}
               style={{ marginLeft: '10px' }}
             >
-              <AudioAnalyzer volumeLevel={volumeLevel} isSessionActive={isSessionActive} />
+              <AudioAnalyzer volumeLevel={volumeLevel} isSessionActive={isSessionActive} audioParams={audioParams} />
             </motion.div>
           )}
         </AnimatePresence>
@@ -169,7 +199,84 @@ const MinimalComponent: React.FC = () => {
   );
 };
 
-export default MinimalComponent;
+const MinimalShowcase = () => {
+  const [audioParams, setAudioParams] = useState<AudioParameters>({
+    waveIntensity: 0.1,
+    noiseLevel: 9,
+    frequency: 5,
+    complexity: 5
+  });
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-full gap-4">
+      <MinimalComponent audioParams={audioParams} />
+      <div className="flex gap-2">
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button variant="outline" size="lg" className="mb-4">Animation Settings</Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-80">
+            <div className="grid gap-4">
+              <div className="space-y-2">
+                <h4 className="font-medium leading-none">Audio Visualization</h4>
+                <p className="text-sm text-muted-foreground">Adjust the wave visualization parameters.</p>
+              </div>
+              <div className="grid gap-2">
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="waveIntensity">Wave Intensity</Label>
+                  <Input
+                    id="waveIntensity"
+                    type="number"
+                    step={0.5}
+                    value={audioParams.waveIntensity}
+                    className="col-span-2"
+                    onChange={(e) => setAudioParams({...audioParams, waveIntensity: parseFloat(e.target.value)})}
+                  />
+                </div>
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="noiseLevel">Noise Level</Label>
+                  <Input
+                    id="noiseLevel"
+                    type="number"
+                    step={1}
+                    value={audioParams.noiseLevel}
+                    className="col-span-2"
+                    onChange={(e) => setAudioParams({...audioParams, noiseLevel: parseFloat(e.target.value)})}
+                  />
+                </div>
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="frequency">Frequency</Label>
+                  <Input
+                    id="frequency"
+                    type="number"
+                    step={1}
+                    value={audioParams.frequency}
+                    className="col-span-2"
+                    onChange={(e) => setAudioParams({...audioParams, frequency: parseFloat(e.target.value)})}
+                  />
+                </div>
+                <div className="grid grid-cols-3 items-center gap-4">
+                  <Label htmlFor="complexity">Wave Complexity</Label>
+                  <Input
+                    id="complexity"
+                    type="number"
+                    min={1}
+                    max={10}
+                    value={audioParams.complexity}
+                    className="col-span-2"
+                    onChange={(e) => setAudioParams({...audioParams, complexity: parseInt(e.target.value)})}
+                  />
+                </div>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+    </div>
+  );
+};
+
+export default {MinimalComponent, MinimalShowcase};
 ````
 </CodeBlockWrapper>
 
@@ -180,9 +287,9 @@ Import the component in your file and then use it in your page. Ensure the use-w
 
 **_Note:_** This component uses Tailwind CSS, make sure to have it installed in your project.
 
-<CodeBlockWrapper size="full">
+<CodeBlockWrapper size="wrapper">
 ```tsx {1,6}
-import MinimalComponent from "@/components/vapi/minimal-component";
+import MinimalComponent from "@/components/openai-blocks/minimal-component";
 
 export default function Home() {
   return (

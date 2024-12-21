@@ -40,7 +40,7 @@ You can work directly in web by forking this codesandbox:
 
 ### Manual Setup
 
-<CodeBlockWrapper size="full">
+<CodeBlockWrapper size="wrapper">
 ```bash
 npx create-next-app@latest
 ```
@@ -48,7 +48,7 @@ npx create-next-app@latest
 
 After running the command, you will be prompted with a series of questions, this is where you can configure your project to use AI Blocks with NextJS and Tailwind CSS.
 
-<CodeBlockWrapper size="full">
+<CodeBlockWrapper size="wrapper">
 ```bash showLineNumbers /Yes/ /No/ /your-project-name/
 What is your project named? your-project-name
 Would you like to use TypeScript? Yes
@@ -61,7 +61,7 @@ Would you like to customize the default import alias No
 </CodeBlockWrapper>
 <br/>
 
-<CodeBlockWrapper size="full">
+<CodeBlockWrapper size="wrapper">
 ```bash
 npm install @vapi-ai/react
 ```
@@ -70,7 +70,7 @@ npm install @vapi-ai/react
 Lastly, copy over the use-vapi hook to your "hooks" folder (if using Next.js). If using Vanilla React, Vue or alternative framework copy over to "lib" or similar folder.
 
 
-<CodeBlockWrapper size="full">
+<CodeBlockWrapper size="wrapper">
 ```ts {5-6} {9-12} {71}
 //hooks/use-vapi.ts
 import { useEffect, useRef, useState, useCallback } from 'react';
