@@ -5,6 +5,7 @@
 
 OpenAI Realtime Blocks is a collection of components and styles that can be used to build web applications. It is designed to be simple and easy to integrate into your **ReactJS** and **NextJS** projects. It leverages the OpenAI Realtime API Beta using WebRTC and offers a hook you can copy and paste into your project. This component library uses the hook to animate framer-motion components. Use this UI library to build modern Voice AI and multi-modal Nextjs applications.
 
+https://github.com/user-attachments/assets/e48c8530-2854-4f43-a0c3-75c5a164046c
 <!-- [![AI Blocks UI Library & API Snips for Vapi Voice AI](https://res.cloudinary.com/marcomontalbano/image/upload/v1720129151/video_to_markdown/images/youtube--gjtUfjiRgAs-c05b58ac6eb4c4700831b2b3070cd403.jpg)](https://www.youtube.com/watch?v=gjtUfjiRgAs "AI Blocks UI Library & API Snips for Vapi Voice AI") -->
 
 ## Features
