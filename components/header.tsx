@@ -19,7 +19,7 @@ export function Header() {
     <header className="sticky top-0 z-50 border-b bg-background">
       <div className="max-md:px-4 md:container h-12 flex justify-center items-center">
         <MobileNav />
-        <nav className="max-md:hidden flex gap-10 w-full items-center">
+        <nav className="max-md:hidden flex gap-4 w-full items-center">
           <Link href="/" className="flex gap-3 items-center">
             <h1 className="text-lg font-medium tracking-tighter flex gap-1 items-center">
               {siteConfig.name}
@@ -28,16 +28,40 @@ export function Header() {
               Beta
             </Badge>
           </Link>
-          <Link href="https://openai-rt-shadcn.vercel.app" >
+          <Link href="/docs" >
               <Button
-                variant="outline"
+                variant="ghost"
                 size="sm"
                 className={cn(
                   "hover:no-underline hover:text-foreground",
                   pathname.includes("components") && !pathname.includes("demos") && "text-foreground"
                 )}
               >
-                Demo Starter Template
+                Installation
+              </Button>
+            </Link>
+            <Link href="/docs/changelog" >
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "hover:no-underline hover:text-foreground",
+                  pathname.includes("components") && !pathname.includes("demos") && "text-foreground"
+                )}
+              >
+                Components
+              </Button>
+            </Link>
+            <Link href="https://openai-rt-shadcn.vercel.app" >
+              <Button
+                variant="ghost"
+                size="sm"
+                className={cn(
+                  "hover:no-underline hover:text-foreground",
+                  pathname.includes("components") && !pathname.includes("demos") && "text-foreground"
+                )}
+              >
+                 Templates
               </Button>
             </Link>
           {/* <div className="flex gap-10 items-center">

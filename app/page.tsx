@@ -1,19 +1,22 @@
 "use client";
-import { Icons } from "@/components/icons";
+
 import { Shine } from "@/components/examples/shine";
-import Glob  from "@/components/examples/glob";
 import Logos from "@/components/logos";
-import { ArrowRight, ArrowRightIcon, MicIcon, PhoneOff, Star } from "lucide-react";
+import { ArrowRight, MicIcon, PhoneOff, Star } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import SparklesText from "@/components/ui/sparkle-text";
-import Siri from "@/components/examples/siri";
-import React, { useEffect, useState } from "react";
 import Transcriber from "@/components/examples/transcriber"; // Adjust the import path as needed
-import useWebRTCAudioSession from "@/hooks/use-webrtc";
 import { siteConfig } from "@/config/site";
-export default async function Home() {
+import { motion } from "framer-motion";
+import React, { useState, useEffect } from 'react';
+import AbstractBall from '@/components/abstract-ball';
+import ConfigSheet from '@/components/examples/config-drawer';
+import useWebRTCAudioSession from '@/hooks/use-webrtc';
+
+
+export default async function Page() {
   return (
     
     <div className="flex flex-col gap-4 container justify-center items-center">
@@ -33,7 +36,7 @@ function HeroLanding() {
   useEffect(() => {
     const getRepoStars = async () => {
       try {
-        const res = await fetch(siteConfig.links.github, {
+        const res = await fetch("https://api.github.com/repos/cameronking4/openai-realtime-blocks", {
           cache: "no-store",
         });
         const data = await res.json();
@@ -100,28 +103,77 @@ function HeroLanding() {
 }
 
 function Hero() {
-  const { handleStartStopClick, isSessionActive, conversation } = useWebRTCAudioSession('alloy');
-
   return (
     <section className="relative w-full mx-auto flex flex-col justify-center items-center gap-8">
-      <div className="flex flex-col gap-5 text-center animate-hero-in">
-        <a
-          rel="noopener noreferrer"
+      <div className="relative flex justify-center items-center w-full p-2">
+        <motion.div
+          layout
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="w-full"
         >
-          <button
-            onClick={handleStartStopClick}
-            className="inline-flex items-center space-x-2 p-4 justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-secondary shadow hover:bg-indigo/30 hover:text-indigo"
-          >
-           {isSessionActive ? <PhoneOff/> : <MicIcon/>}
-          </button>
-          <p className="text-sm mt-4 animate" style={{ animationDelay: "0.4s", animationFillMode: "forwards" }}>Toggle Voice Chat</p>
-        </a>
-      </div>
-      <div className="relative flex justify-center items-center h-[500px] w-full p-2">
-        <div className="size-full mx-auto">
-            <Transcriber conversation={conversation} />
-        </div>
+         
+            <div className="grid grid-cols-1 gap-8 w-full">
+              <motion.div 
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                className="flex justify-center items-center group relative"
+              >
+                <GlobComponent /> 
+              </motion.div>
+            </div>
+          
+        </motion.div>
       </div>
     </section>
   );
 }
+
+
+
+const globConfig = {
+  perlinTime: 90.0,
+  perlinDNoise: 0.0,
+  chromaRGBr: 255,
+  chromaRGBg: 255,
+  chromaRGBb: 255,
+  chromaRGBn: 255,
+  chromaRGBm: 255,
+  sphereWireframe: true,
+  spherePoints: true,
+  spherePsize: 0.3,
+  cameraSpeedY: 0,
+  cameraSpeedX: 0,
+  cameraZoom: 170,
+  cameraGuide: false,
+  perlinMorph: 9,
+};
+
+const GlobComponent: React.FC = () => {
+  const { currentVolume, isSessionActive, handleStartStopClick } = useWebRTCAudioSession('alloy');
+  const [config, setConfig] = useState(globConfig);
+
+  useEffect(() => {
+    if (!isSessionActive) {
+      setConfig(globConfig);
+      return;
+    }
+    // Only update when volume changes and session is active
+    if (isSessionActive && currentVolume > 0.01) {
+      setConfig({
+        ...globConfig,
+        perlinTime: 20.0,
+        perlinMorph: 25.0,
+      });
+    } else {
+      setConfig({
+        ...globConfig,
+      });
+    }
+  }, [isSessionActive, currentVolume]);
+
+  return (
+    <div style={{ width: '100%', height: '100%' }} className="flex flex-col justify-center items-center cursor-pointer" onClick={handleStartStopClick}>
+      <AbstractBall {...config} />
+    </div>
+  );
+};
