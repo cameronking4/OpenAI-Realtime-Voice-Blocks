@@ -7,13 +7,12 @@ import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import SparklesText from "@/components/ui/sparkle-text";
-import Transcriber from "@/components/examples/transcriber"; // Adjust the import path as needed
 import { siteConfig } from "@/config/site";
 import { motion } from "framer-motion";
 import React, { useState, useEffect } from 'react';
 import AbstractBall from '@/components/abstract-ball';
-import ConfigSheet from '@/components/examples/config-drawer';
 import useWebRTCAudioSession from '@/hooks/use-webrtc';
+import { StatusDisplay } from "@/components/examples/status-notifications";
 
 
 export default async function Page() {
@@ -149,7 +148,7 @@ const globConfig = {
 };
 
 const GlobComponent: React.FC = () => {
-  const { currentVolume, isSessionActive, handleStartStopClick } = useWebRTCAudioSession('alloy');
+  const { status, currentVolume, isSessionActive, handleStartStopClick } = useWebRTCAudioSession('alloy');
   const [config, setConfig] = useState(globConfig);
 
   useEffect(() => {
@@ -174,6 +173,7 @@ const GlobComponent: React.FC = () => {
   return (
     <div style={{ width: '100%', height: '100%' }} className="flex flex-col justify-center items-center cursor-pointer" onClick={handleStartStopClick}>
       <AbstractBall {...config} />
+      <StatusDisplay status={status} />
     </div>
   );
 };

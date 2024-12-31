@@ -4,6 +4,7 @@ import "./globals.css";
 import { siteConfig } from "@/config/site";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Analytics } from "@vercel/analytics/react";
+import { Toaster } from "@/components/ui/sonner"
 import { cn } from "@/lib/utils";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
@@ -56,6 +57,7 @@ export default function RootLayout({
             <Footer />
           </div>
           <Analytics />
+          <Toaster />
         </ThemeProvider>
       </body>
       <Script
